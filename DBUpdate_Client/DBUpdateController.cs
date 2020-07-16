@@ -28,21 +28,27 @@ namespace DBUpdate_Client
 
             // Get list of files to process
             var executionDescriptors = ReadExecutionDescriptors();
+            ProcessExecutionDescriptors(executionDescriptors);
+        }
 
+        private DBUtilConfiguration ReadConfiguration() => new DBUtilConfigurationReader(this.configurationProvider).Read();
+        private IEnumerable<DBUtilExecutionDescriptor> ReadExecutionDescriptors() => new DBUtilExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
+        private void ProcessExecutionDescriptors(IEnumerable<DBUtilExecutionDescriptor> executionDescriptors)
+        {
             // For each file
             foreach (var executionDescriptor in executionDescriptors)
             {
                 try
                 {
-                    Log($"Processing {executionDescriptor}");
+                    Log($"Processing {executionDescriptor.Path}");
+
                     // Check if the configuration file contains a matching connection string
-                    var connectionStringName = GetConnectionStringName(executionDescriptor.Path);
-                    var connectionString = GetConnectionString(connectionStringName);
+                    var connectionString = GetConnectionString(executionDescriptor.ConnectionStringName);
 
                     // If yes
                     if (!String.IsNullOrWhiteSpace(connectionString))
                     {
-                        Log($"Using connection string {connectionStringName}");
+                        Log($"Using connection string {executionDescriptor.ConnectionStringName}");
                         Log("Checking DB structure");
                         // Check if the structure exists
                         CheckDBStructure(connectionString);
@@ -110,7 +116,7 @@ namespace DBUpdate_Client
                     }
                     else
                     {
-                        Log($"Connection string {connectionStringName} not found.");
+                        Log($"Connection string {executionDescriptor.ConnectionStringName} not found.");
                     }
                 }
                 catch (Exception ex)
@@ -123,12 +129,7 @@ namespace DBUpdate_Client
                 }
             }
         }
-
-        private DBUtilConfiguration ReadConfiguration() => new DBUtilConfigurationReader(this.configurationProvider).Read();
-        private IEnumerable<DBUtilExecutionDescriptor> ReadExecutionDescriptors() => new DBUtilExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
         private void Log(string message) => this.logger.LogMessage(message);
-        private static string GetWorkingDirectory() => ConfigurationManager.AppSettings["WorkingDirectory"];
-        private static string GetConnectionStringName(string configFilePath) => XDocument.Load(configFilePath).Root.Element("configuration").Element("connectionStringName").Value;
         private static IEnumerable<string> GetBlocksToExecute(string configFilePath) => XDocument.Load(configFilePath).Root.Element("blocksToExecute").Elements("block").Select(b => b.Value).ToArray();
         private static IEnumerable<string> GetScriptsInBlock(string blockName, string configFilePath, string workingDir) => XDocument.Load(configFilePath).Root.Element("blockDefinitions").Elements("blockDefinition").Single(e => e.Attribute("name").Value == blockName).Elements("script").Select(e => Path.Combine(workingDir, e.Value)).ToArray();
         private static string GetConnectionString(string connectionStringName) => ConfigurationManager.ConnectionStrings[connectionStringName]?.ConnectionString;

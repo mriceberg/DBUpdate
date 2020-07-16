@@ -3,6 +3,7 @@
     public class DBUtilExecutionDescriptorBuilder
     {
         private string path;
+        private string connectionStringName;
 
         public DBUtilExecutionDescriptorBuilder()
         {
@@ -12,6 +13,7 @@
         public DBUtilExecutionDescriptorBuilder Reset()
         {
             this.path = null;
+            this.connectionStringName = null;
 
             return this;
         }
@@ -22,8 +24,14 @@
 
             return this;
         }
+        public DBUtilExecutionDescriptorBuilder SetConnectionStringName(string value)
+        {
+            this.connectionStringName = value;
+
+            return this;
+        }
 
         public DBUtilExecutionDescriptor Build()
-            => new DBUtilExecutionDescriptor(path);
+            => new DBUtilExecutionDescriptor(path, connectionStringName);
     }
 }

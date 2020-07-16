@@ -11,8 +11,12 @@ namespace DBUpdate_Client
             => GetFilesToRead(folder).Select(file => Read(Path.Combine(folder, file)));
         public DBUtilExecutionDescriptor Read(string filePath)
         {
-            DBUtilExecutionDescriptorBuilder builder = new DBUtilExecutionDescriptorBuilder();
-            builder.SetPath(filePath);
+            XDocument descriptor = XDocument.Load(filePath);
+            string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
+            
+            DBUtilExecutionDescriptorBuilder builder = new DBUtilExecutionDescriptorBuilder()
+                .SetPath(filePath)
+                .SetConnectionStringName(connectionStringName);
 
             return builder.Build();
         }
