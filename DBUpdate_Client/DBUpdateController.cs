@@ -24,11 +24,10 @@ namespace DBUpdate_Client
         public void Execute()
         {
             this.configuration = ReadConfiguration();
-
             Log($"Working directory: {configuration.WorkingDirectory}");
 
             // Get list of files to process
-            var executionDescriptors = GetConfigFilesToProcess(configuration.WorkingDirectory);
+            var executionDescriptors = ReadExecutionDescriptors();
 
             // For each file
             foreach (var executionDescriptor in executionDescriptors)
@@ -37,7 +36,7 @@ namespace DBUpdate_Client
                 {
                     Log($"Processing {executionDescriptor}");
                     // Check if the configuration file contains a matching connection string
-                    var connectionStringName = GetConnectionStringName(executionDescriptor);
+                    var connectionStringName = GetConnectionStringName(executionDescriptor.Path);
                     var connectionString = GetConnectionString(connectionStringName);
 
                     // If yes
@@ -53,7 +52,7 @@ namespace DBUpdate_Client
                         Log($"Run {runId} created.");
 
                         // Read the list of blocks required to reach the expected state in the correct order
-                        var blocksToExecute = GetBlocksToExecute(executionDescriptor);
+                        var blocksToExecute = GetBlocksToExecute(executionDescriptor.Path);
 
                         // Check in DB until which blocks scripts have already been run
                         blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionString);
@@ -63,7 +62,7 @@ namespace DBUpdate_Client
                         {
                             Log($"Checking block {block}");
                             // Read the block definition
-                            var scripts = GetScriptsInBlock(block, executionDescriptor, configuration.WorkingDirectory);
+                            var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
 
                             // For each script to execute
                             foreach (var script in scripts)
@@ -84,7 +83,7 @@ namespace DBUpdate_Client
                             Log($"Executing block {block}");
 
                             // For each script to execute
-                            var scripts = GetScriptsInBlock(block, executionDescriptor, configuration.WorkingDirectory);
+                            var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
                             foreach (var script in scripts)
                             {
                                 Log($"Executing script {script}");
@@ -126,10 +125,9 @@ namespace DBUpdate_Client
         }
 
         private DBUtilConfiguration ReadConfiguration() => new DBUtilConfigurationReader(this.configurationProvider).Read();
-
+        private IEnumerable<DBUtilExecutionDescriptor> ReadExecutionDescriptors() => new DBUtilExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
         private void Log(string message) => this.logger.LogMessage(message);
         private static string GetWorkingDirectory() => ConfigurationManager.AppSettings["WorkingDirectory"];
-        private static IEnumerable<string> GetConfigFilesToProcess(string workingDir) => Directory.EnumerateFiles(workingDir, "Scripts*.xml").Select(f => Path.Combine(workingDir, f));
         private static string GetConnectionStringName(string configFilePath) => XDocument.Load(configFilePath).Root.Element("configuration").Element("connectionStringName").Value;
         private static IEnumerable<string> GetBlocksToExecute(string configFilePath) => XDocument.Load(configFilePath).Root.Element("blocksToExecute").Elements("block").Select(b => b.Value).ToArray();
         private static IEnumerable<string> GetScriptsInBlock(string blockName, string configFilePath, string workingDir) => XDocument.Load(configFilePath).Root.Element("blockDefinitions").Elements("blockDefinition").Single(e => e.Attribute("name").Value == blockName).Elements("script").Select(e => Path.Combine(workingDir, e.Value)).ToArray();

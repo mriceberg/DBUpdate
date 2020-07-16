@@ -52,6 +52,9 @@
     <Compile Include="DBUtilConfiguration.cs" />
     <Compile Include="DBUtilConfigurationBuilder.cs" />
     <Compile Include="DBUtilConfigurationReader.cs" />
+    <Compile Include="DBUtilExecutionDescriptor.cs" />
+    <Compile Include="DBUtilExecutionDescriptorBuilder.cs" />
+    <Compile Include="DBUtilExecutionDescriptorReader.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
     <Compile Include="Logger.cs" />
