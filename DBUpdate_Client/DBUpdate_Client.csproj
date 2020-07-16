@@ -49,6 +49,8 @@
     <Compile Include="ConfigurationProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="DBUpdateController.cs" />
+    <Compile Include="DBUtilConfiguration.cs" />
+    <Compile Include="DBUtilConfigurationBuilder.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
     <Compile Include="Logger.cs" />

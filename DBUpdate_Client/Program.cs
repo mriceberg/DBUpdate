@@ -7,10 +7,10 @@ namespace DBUpdate_Client
         static void Main(string[] args)
         {
             UtilFactory utils = new DefaultUtilFactory();
-            ConfigurationProvider configuration = utils.MakeConfigurationProvider();
+            ConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
             Logger logger = utils.MakeLogger();
 
-            DBUpdateController controller = new DBUpdateController(configuration, logger);
+            DBUpdateController controller = new DBUpdateController(configurationProvider, logger);
 
             Console.ReadLine();
         }

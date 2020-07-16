@@ -10,17 +10,21 @@ namespace DBUpdate_Client
 {
     public class DBUpdateController
     {
-        private readonly ConfigurationProvider configuration;
+        private readonly ConfigurationProvider configurationProvider;
         private readonly Logger logger;
+
+        private DBUtilConfiguration configuration;
 
         public DBUpdateController(ConfigurationProvider configuration, Logger logger)
         {
-            this.configuration = configuration;
+            this.configurationProvider = configuration;
             this.logger = logger;
         }
 
         public void Execute()
         {
+            this.configuration = ReadConfiguration();
+
             // Get the data directory from the config file
             var workingDir = GetWorkingDirectory();
             Log($"Working directory: {workingDir}");
@@ -122,6 +126,14 @@ namespace DBUpdate_Client
                 }
             }
         }
+
+        private DBUtilConfiguration ReadConfiguration()
+        {
+            DBUtilConfigurationBuilder builder = new DBUtilConfigurationBuilder();
+
+            return builder.Build();
+        }
+
         private void Log(string message) => this.logger.LogMessage(message);
         private static string GetWorkingDirectory() => ConfigurationManager.AppSettings["WorkingDirectory"];
         private static IEnumerable<string> GetConfigFilesToProcess(string workingDir) => Directory.EnumerateFiles(workingDir, "Scripts*.xml").Select(f => Path.Combine(workingDir, f));
