@@ -1,16 +1,16 @@
 ﻿namespace DBUpdate_Client
 {
-    public class DBUtilExecutionDescriptorBuilder
+    public class DBUpdateExecutionDescriptorBuilder
     {
         private string path;
         private string connectionStringName;
 
-        public DBUtilExecutionDescriptorBuilder()
+        public DBUpdateExecutionDescriptorBuilder()
         {
             Reset();
         }
 
-        public DBUtilExecutionDescriptorBuilder Reset()
+        public DBUpdateExecutionDescriptorBuilder Reset()
         {
             this.path = null;
             this.connectionStringName = null;
@@ -18,20 +18,20 @@
             return this;
         }
 
-        public DBUtilExecutionDescriptorBuilder SetPath(string value)
+        public DBUpdateExecutionDescriptorBuilder SetPath(string value)
         {
             this.path = value;
 
             return this;
         }
-        public DBUtilExecutionDescriptorBuilder SetConnectionStringName(string value)
+        public DBUpdateExecutionDescriptorBuilder SetConnectionStringName(string value)
         {
             this.connectionStringName = value;
 
             return this;
         }
 
-        public DBUtilExecutionDescriptor Build()
-            => new DBUtilExecutionDescriptor(path, connectionStringName);
+        public DBUpdateExecutionDescriptor Build()
+            => new DBUpdateExecutionDescriptor(path, connectionStringName);
     }
 }

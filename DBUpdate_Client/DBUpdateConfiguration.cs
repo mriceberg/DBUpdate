@@ -1,10 +1,10 @@
 ﻿namespace DBUpdate_Client
 {
-    public class DBUtilConfiguration
+    public class DBUpdateConfiguration
     {
         public string WorkingDirectory { get; private set; }
 
-        public DBUtilConfiguration(string workingDirectory)
+        public DBUpdateConfiguration(string workingDirectory)
         {
             this.WorkingDirectory = workingDirectory;
         }

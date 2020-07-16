@@ -5,16 +5,16 @@ using System.Xml.Linq;
 
 namespace DBUpdate_Client
 {
-    public class DBUtilExecutionDescriptorReader
+    public class DBUpdateExecutionDescriptorReader
     {
-        public IEnumerable<DBUtilExecutionDescriptor> ReadAll(string folder)
+        public IEnumerable<DBUpdateExecutionDescriptor> ReadAll(string folder)
             => GetFilesToRead(folder).Select(file => Read(Path.Combine(folder, file)));
-        public DBUtilExecutionDescriptor Read(string filePath)
+        public DBUpdateExecutionDescriptor Read(string filePath)
         {
             XDocument descriptor = XDocument.Load(filePath);
             string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
             
-            DBUtilExecutionDescriptorBuilder builder = new DBUtilExecutionDescriptorBuilder()
+            DBUpdateExecutionDescriptorBuilder builder = new DBUpdateExecutionDescriptorBuilder()
                 .SetPath(filePath)
                 .SetConnectionStringName(connectionStringName);
 

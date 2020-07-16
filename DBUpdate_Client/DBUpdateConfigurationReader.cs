@@ -1,21 +1,21 @@
 ﻿namespace DBUpdate_Client
 {
-    public class DBUtilConfigurationReader
+    public class DBUpdateConfigurationReader
     {
         private readonly ConfigurationProvider configurationProvider;
 
         public const string WORKING_DIRECTORY_APPSETTING_NAME = "WorkingDirectory";
 
-        public DBUtilConfigurationReader(ConfigurationProvider configurationProvider)
+        public DBUpdateConfigurationReader(ConfigurationProvider configurationProvider)
         {
             this.configurationProvider = configurationProvider;
         }
 
-        public DBUtilConfiguration Read()
+        public DBUpdateConfiguration Read()
         {
             string workingDirectory = ReadWorkingDirectory();
 
-            return new DBUtilConfigurationBuilder()
+            return new DBUpdateConfigurationBuilder()
                 .SetWorkingDirectory(workingDirectory)
                 .Build();
         }

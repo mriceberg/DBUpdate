@@ -13,7 +13,7 @@ namespace DBUpdate_Client
         private readonly ConfigurationProvider configurationProvider;
         private readonly Logger logger;
 
-        private DBUtilConfiguration configuration;
+        private DBUpdateConfiguration configuration;
 
         public DBUpdateController(ConfigurationProvider configuration, Logger logger)
         {
@@ -31,9 +31,9 @@ namespace DBUpdate_Client
             ProcessExecutionDescriptors(executionDescriptors);
         }
 
-        private DBUtilConfiguration ReadConfiguration() => new DBUtilConfigurationReader(this.configurationProvider).Read();
-        private IEnumerable<DBUtilExecutionDescriptor> ReadExecutionDescriptors() => new DBUtilExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
-        private void ProcessExecutionDescriptors(IEnumerable<DBUtilExecutionDescriptor> executionDescriptors)
+        private DBUpdateConfiguration ReadConfiguration() => new DBUpdateConfigurationReader(this.configurationProvider).Read();
+        private IEnumerable<DBUpdateExecutionDescriptor> ReadExecutionDescriptors() => new DBUpdateExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
+        private void ProcessExecutionDescriptors(IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors)
         {
             foreach (var executionDescriptor in executionDescriptors)
             {
@@ -51,7 +51,7 @@ namespace DBUpdate_Client
                 }
             }
         }
-        private void ProcessExecutionDescriptor(DBUtilExecutionDescriptor executionDescriptor)
+        private void ProcessExecutionDescriptor(DBUpdateExecutionDescriptor executionDescriptor)
         {
             Log($"Processing {executionDescriptor.Path}");
 
