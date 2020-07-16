@@ -6,8 +6,9 @@ namespace DBUpdate_Client
     {
         static void Main(string[] args)
         {
-            ConfigurationProvider configuration = new DefaultConfigurationProvider();
-            Logger logger = new ConsoleLogger();
+            UtilFactory utils = new DefaultUtilFactory();
+            ConfigurationProvider configuration = utils.MakeConfigurationProvider();
+            Logger logger = utils.MakeLogger();
 
             DBUpdateController controller = new DBUpdateController(configuration, logger);
 
