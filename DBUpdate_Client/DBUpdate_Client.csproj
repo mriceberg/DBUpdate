@@ -55,6 +55,7 @@
     <Compile Include="DBUpdateExecutionDescriptor.cs" />
     <Compile Include="DBUpdateExecutionDescriptorBuilder.cs" />
     <Compile Include="DBUpdateExecutionDescriptorReader.cs" />
+    <Compile Include="DBUpdateStructureValidator.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
     <Compile Include="Logger.cs" />
