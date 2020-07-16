@@ -62,9 +62,12 @@ namespace DBUpdate_Client
             // If it exists
             if (ConnectionStringIsValid(connectionString))
             {
+
+                ConnectionProvider connectionProvider = new ConstantConnectionProvider(connectionString);
+
                 Log("Checking DB structure");
                 // Check if the structure exists
-                CheckDBStructure(connectionString);
+                CheckDBStructure(connectionProvider);
 
                 // Create the Run in DB
                 var runId = CreateRun(connectionString);
@@ -238,7 +241,7 @@ namespace DBUpdate_Client
                 }
             }
         }
-        private void CheckDBStructure(string connectionString) => new DBUpdateStructureValidator(connectionString).EnsureStructureExists();
+        private void CheckDBStructure(ConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
         private static IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
         {
             var result = new List<IEnumerable<string>>();

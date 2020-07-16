@@ -45,9 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseConfigurationProvider.cs" />
+    <Compile Include="BaseConnectionProvider.cs" />
     <Compile Include="BaseLogger.cs" />
     <Compile Include="ConfigurationProvider.cs" />
+    <Compile Include="ConnectionProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="ConstantConnectionProvider.cs" />
     <Compile Include="DBUpdateController.cs" />
     <Compile Include="DBUpdateConfiguration.cs" />
     <Compile Include="DBUpdateConfigurationBuilder.cs" />

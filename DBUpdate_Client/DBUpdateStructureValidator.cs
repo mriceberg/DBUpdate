@@ -4,15 +4,15 @@ namespace DBUpdate_Client
 {
     public class DBUpdateStructureValidator
     {
-        private readonly string connectionString;
+        private readonly ConnectionProvider connectionProvider;
 
         public const string SCHEMA_NAME = "dbupdate";
         public const string RUN_TABLE_NAME = "Run";
         public const string SCRIPT_TABLE_NAME = "Script";
 
-        public DBUpdateStructureValidator(string connectionString)
+        public DBUpdateStructureValidator(ConnectionProvider connectionProvider)
         {
-            this.connectionString = connectionString;
+            this.connectionProvider = connectionProvider; ;
         }
 
         public void EnsureStructureExists()
@@ -57,7 +57,7 @@ namespace DBUpdate_Client
 
         private void CreateSchema(string schemaName)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = connectionProvider.GetConnection())
             {
                 using (var command = new SqlCommand())
                 {
@@ -76,7 +76,7 @@ namespace DBUpdate_Client
                       new SqlParameter[] { new SqlParameter("@SchemaName", schemaName), new SqlParameter("@TableName", tableName) });
         private void CreateTable(string schemaName, string tableName, string tableContents)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = connectionProvider.GetConnection())
             {
                 using (var command = new SqlCommand())
                 {
@@ -93,7 +93,7 @@ namespace DBUpdate_Client
 
         private bool Exists(string queryText, params SqlParameter[] queryParameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = connectionProvider.GetConnection())
             {
                 using (var command = new SqlCommand())
                 {
