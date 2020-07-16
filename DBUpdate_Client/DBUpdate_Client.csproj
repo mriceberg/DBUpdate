@@ -44,6 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseConfigurationProvider.cs" />
+    <Compile Include="ConfigurationProvider.cs" />
+    <Compile Include="DBUpdateController.cs" />
+    <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

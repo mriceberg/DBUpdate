@@ -14,6 +14,9 @@ namespace DBUpdate_Client
     {
         static void Main(string[] args)
         {
+            ConfigurationProvider configuration = new DefaultConfigurationProvider();
+            DBUpdateController controller = new DBUpdateController(configuration);
+
             // Get the data directory from the config file
             var workingDir = GetWorkingDirectory();
             Log($"Working directory: {workingDir}");
