@@ -25,12 +25,10 @@ namespace DBUpdate_Client
         {
             this.configuration = ReadConfiguration();
 
-            // Get the data directory from the config file
-            var workingDir = GetWorkingDirectory();
-            Log($"Working directory: {workingDir}");
+            Log($"Working directory: {configuration.WorkingDirectory}");
 
             // Get list of files to process
-            var executionDescriptors = GetConfigFilesToProcess(workingDir);
+            var executionDescriptors = GetConfigFilesToProcess(configuration.WorkingDirectory);
 
             // For each file
             foreach (var executionDescriptor in executionDescriptors)
@@ -65,7 +63,7 @@ namespace DBUpdate_Client
                         {
                             Log($"Checking block {block}");
                             // Read the block definition
-                            var scripts = GetScriptsInBlock(block, executionDescriptor, workingDir);
+                            var scripts = GetScriptsInBlock(block, executionDescriptor, configuration.WorkingDirectory);
 
                             // For each script to execute
                             foreach (var script in scripts)
@@ -86,7 +84,7 @@ namespace DBUpdate_Client
                             Log($"Executing block {block}");
 
                             // For each script to execute
-                            var scripts = GetScriptsInBlock(block, executionDescriptor, workingDir);
+                            var scripts = GetScriptsInBlock(block, executionDescriptor, configuration.WorkingDirectory);
                             foreach (var script in scripts)
                             {
                                 Log($"Executing script {script}");
@@ -127,12 +125,7 @@ namespace DBUpdate_Client
             }
         }
 
-        private DBUtilConfiguration ReadConfiguration()
-        {
-            DBUtilConfigurationBuilder builder = new DBUtilConfigurationBuilder();
-
-            return builder.Build();
-        }
+        private DBUtilConfiguration ReadConfiguration() => new DBUtilConfigurationReader(this.configurationProvider).Read();
 
         private void Log(string message) => this.logger.LogMessage(message);
         private static string GetWorkingDirectory() => ConfigurationManager.AppSettings["WorkingDirectory"];

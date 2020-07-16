@@ -2,14 +2,27 @@
 {
     public class DBUtilConfigurationBuilder
     {
+        private string workingDirectory;
+
         public DBUtilConfigurationBuilder()
         {
             Reset();
         }
 
-        public void Reset()
-        { }
+        public DBUtilConfigurationBuilder Reset()
+        {
+            this.workingDirectory = null;
 
-        public DBUtilConfiguration Build() => new DBUtilConfiguration();
+            return this;
+        }
+
+        public DBUtilConfigurationBuilder SetWorkingDirectory(string value)
+        {
+            this.workingDirectory = value;
+
+            return this;
+        }
+
+        public DBUtilConfiguration Build() => new DBUtilConfiguration(workingDirectory);
     }
 }
