@@ -35,89 +35,11 @@ namespace DBUpdate_Client
         private IEnumerable<DBUtilExecutionDescriptor> ReadExecutionDescriptors() => new DBUtilExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
         private void ProcessExecutionDescriptors(IEnumerable<DBUtilExecutionDescriptor> executionDescriptors)
         {
-            // For each file
             foreach (var executionDescriptor in executionDescriptors)
             {
                 try
                 {
-                    Log($"Processing {executionDescriptor.Path}");
-
-                    // Check if the configuration file contains a matching connection string
-                    var connectionString = GetConnectionString(executionDescriptor.ConnectionStringName);
-                    Log($"Using connection string {executionDescriptor.ConnectionStringName}");
-
-                    // If it exists
-                    if (ConnectionStringIsValid(connectionString))
-                    {
-                        Log("Checking DB structure");
-                        // Check if the structure exists
-                        CheckDBStructure(connectionString);
-
-                        // Create the Run in DB
-                        var runId = CreateRun(connectionString);
-                        Log($"Run {runId} created.");
-
-                        // Read the list of blocks required to reach the expected state in the correct order
-                        var blocksToExecute = GetBlocksToExecute(executionDescriptor.Path);
-
-                        // Check in DB until which blocks scripts have already been run
-                        blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionString);
-
-                        // For each block not run yet
-                        foreach (var block in blocksToExecute)
-                        {
-                            Log($"Checking block {block}");
-                            // Read the block definition
-                            var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
-
-                            // For each script to execute
-                            foreach (var script in scripts)
-                            {
-                                Log($"Checking script {script}");
-                                // Check that the script is available
-                                if (!File.Exists(script))
-                                {
-                                    // Fail if the script is missing
-                                    throw new FileNotFoundException($"Missing script in block {block}. ", script);
-                                }
-                            }
-                        }
-
-                        // For each block not run yet
-                        foreach (var block in blocksToExecute)
-                        {
-                            Log($"Executing block {block}");
-
-                            // For each script to execute
-                            var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
-                            foreach (var script in scripts)
-                            {
-                                Log($"Executing script {script}");
-                                // Read the script
-                                string[] scriptText = File.ReadAllLines(script);
-
-                                // Parse into batches according to GO
-                                var batches = SplitScriptIntoBatches(scriptText);
-
-                                // For each batch
-                                foreach (var batch in batches)
-                                {
-                                    // Execute the batch
-                                    ExecuteBatch(batch, connectionString);
-                                }
-
-                                // Update the DB to indicate that the script has been executed (incl. block details)
-                                LogScriptExecution(connectionString, block, script, runId);
-                            }
-                        }
-
-                        // Update the Run in DB
-                        EndRun(connectionString, runId);
-                    }
-                    else
-                    {
-                        Log($"Connection string {executionDescriptor.ConnectionStringName} not found.");
-                    }
+                    ProcessExecutionDescriptor(executionDescriptor);
                 }
                 catch (Exception ex)
                 {
@@ -127,6 +49,87 @@ namespace DBUpdate_Client
                         ex = ex.InnerException;
                     }
                 }
+            }
+        }
+        private void ProcessExecutionDescriptor(DBUtilExecutionDescriptor executionDescriptor)
+        {
+            Log($"Processing {executionDescriptor.Path}");
+
+            // Check if the configuration file contains a matching connection string
+            var connectionString = GetConnectionString(executionDescriptor.ConnectionStringName);
+            Log($"Using connection string {executionDescriptor.ConnectionStringName}");
+
+            // If it exists
+            if (ConnectionStringIsValid(connectionString))
+            {
+                Log("Checking DB structure");
+                // Check if the structure exists
+                CheckDBStructure(connectionString);
+
+                // Create the Run in DB
+                var runId = CreateRun(connectionString);
+                Log($"Run {runId} created.");
+
+                // Read the list of blocks required to reach the expected state in the correct order
+                var blocksToExecute = GetBlocksToExecute(executionDescriptor.Path);
+
+                // Check in DB until which blocks scripts have already been run
+                blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionString);
+
+                // For each block not run yet
+                foreach (var block in blocksToExecute)
+                {
+                    Log($"Checking block {block}");
+                    // Read the block definition
+                    var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
+
+                    // For each script to execute
+                    foreach (var script in scripts)
+                    {
+                        Log($"Checking script {script}");
+                        // Check that the script is available
+                        if (!File.Exists(script))
+                        {
+                            // Fail if the script is missing
+                            throw new FileNotFoundException($"Missing script in block {block}. ", script);
+                        }
+                    }
+                }
+
+                // For each block not run yet
+                foreach (var block in blocksToExecute)
+                {
+                    Log($"Executing block {block}");
+
+                    // For each script to execute
+                    var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
+                    foreach (var script in scripts)
+                    {
+                        Log($"Executing script {script}");
+                        // Read the script
+                        string[] scriptText = File.ReadAllLines(script);
+
+                        // Parse into batches according to GO
+                        var batches = SplitScriptIntoBatches(scriptText);
+
+                        // For each batch
+                        foreach (var batch in batches)
+                        {
+                            // Execute the batch
+                            ExecuteBatch(batch, connectionString);
+                        }
+
+                        // Update the DB to indicate that the script has been executed (incl. block details)
+                        LogScriptExecution(connectionString, block, script, runId);
+                    }
+                }
+
+                // Update the Run in DB
+                EndRun(connectionString, runId);
+            }
+            else
+            {
+                Log($"Connection string {executionDescriptor.ConnectionStringName} not found.");
             }
         }
         private void Log(string message) => this.logger.LogMessage(message);
