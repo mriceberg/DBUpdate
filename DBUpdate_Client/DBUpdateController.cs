@@ -44,11 +44,11 @@ namespace DBUpdate_Client
 
                     // Check if the configuration file contains a matching connection string
                     var connectionString = GetConnectionString(executionDescriptor.ConnectionStringName);
+                    Log($"Using connection string {executionDescriptor.ConnectionStringName}");
 
-                    // If yes
-                    if (!String.IsNullOrWhiteSpace(connectionString))
+                    // If it exists
+                    if (ConnectionStringIsValid(connectionString))
                     {
-                        Log($"Using connection string {executionDescriptor.ConnectionStringName}");
                         Log("Checking DB structure");
                         // Check if the structure exists
                         CheckDBStructure(connectionString);
@@ -130,9 +130,10 @@ namespace DBUpdate_Client
             }
         }
         private void Log(string message) => this.logger.LogMessage(message);
+        private string GetConnectionString(string connectionStringName) => configurationProvider.GetConnectionString(connectionStringName);
+        private bool ConnectionStringIsValid(string connectionString) => !String.IsNullOrWhiteSpace(connectionString);
         private static IEnumerable<string> GetBlocksToExecute(string configFilePath) => XDocument.Load(configFilePath).Root.Element("blocksToExecute").Elements("block").Select(b => b.Value).ToArray();
         private static IEnumerable<string> GetScriptsInBlock(string blockName, string configFilePath, string workingDir) => XDocument.Load(configFilePath).Root.Element("blockDefinitions").Elements("blockDefinition").Single(e => e.Attribute("name").Value == blockName).Elements("script").Select(e => Path.Combine(workingDir, e.Value)).ToArray();
-        private static string GetConnectionString(string connectionStringName) => ConfigurationManager.ConnectionStrings[connectionStringName]?.ConnectionString;
         private static int CreateRun(string connectionString)
         {
             using (var connection = new SqlConnection(connectionString))

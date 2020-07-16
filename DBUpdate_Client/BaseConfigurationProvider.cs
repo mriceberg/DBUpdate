@@ -3,7 +3,9 @@
     public abstract class BaseConfigurationProvider : ConfigurationProvider
     {
         public string GetAppSetting(string settingName, string valueIfNotFound = null) => DoGetAppSetting(settingName) ?? valueIfNotFound;
+        public string GetConnectionString(string connectionStringName, string valueIfNotFound = null) => DoGetConnectionString(connectionStringName) ?? valueIfNotFound;
 
         protected abstract string DoGetAppSetting(string settingName);
+        protected abstract string DoGetConnectionString(string connectionStringName);
     }
 }
