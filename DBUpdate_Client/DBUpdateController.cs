@@ -70,7 +70,8 @@ namespace DBUpdate_Client
                 CheckDBStructure(connectionProvider);
 
                 // Create the Run in DB
-                var runId = CreateRun(connectionString);
+                RunGateway run = new RunGateway(connectionProvider);
+                var runId = run.CreateInstance();
                 Log($"Run {runId} created.");
 
                 // Read the list of blocks required to reach the expected state in the correct order
@@ -140,29 +141,6 @@ namespace DBUpdate_Client
         private bool ConnectionStringIsValid(string connectionString) => !String.IsNullOrWhiteSpace(connectionString);
         private static IEnumerable<string> GetBlocksToExecute(string configFilePath) => XDocument.Load(configFilePath).Root.Element("blocksToExecute").Elements("block").Select(b => b.Value).ToArray();
         private static IEnumerable<string> GetScriptsInBlock(string blockName, string configFilePath, string workingDir) => XDocument.Load(configFilePath).Root.Element("blockDefinitions").Elements("blockDefinition").Single(e => e.Attribute("name").Value == blockName).Elements("script").Select(e => Path.Combine(workingDir, e.Value)).ToArray();
-        private static int CreateRun(string connectionString)
-        {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = $"INSERT INTO dbupdate.Run DEFAULT VALUES; SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-                    connection.Open();
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        reader.Read();
-
-                        int id = reader.GetInt32(0);
-
-                        return id;
-                    }
-                }
-            }
-        }
         private static IEnumerable<string> RemoveBlocksAlreadyExecuted(IEnumerable<string> blocksToExecute, string connectionString)
         {
             IList<string> alreadyExecuted = new List<string>();
