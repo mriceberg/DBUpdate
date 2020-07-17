@@ -77,7 +77,7 @@ namespace DBUpdate_Client
                 Log($"Run {run.Id} created.");
 
                 // Read the list of blocks required to reach the expected state in the correct order
-                var blocksToExecute = GetBlocksToExecute(executionDescriptor.Path);
+                var blocksToExecute = executionDescriptor.BlocksToExecute;
 
                 // Check in DB until which blocks scripts have already been run
                 blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionString);
@@ -87,7 +87,7 @@ namespace DBUpdate_Client
                 {
                     Log($"Checking block {block}");
                     // Read the block definition
-                    var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
+                    var scripts = block.ScriptNames.Select(sn => Path.Combine(configuration.WorkingDirectory, sn));
 
                     // For each script to execute
                     foreach (var script in scripts)
@@ -108,7 +108,7 @@ namespace DBUpdate_Client
                     Log($"Executing block {block}");
 
                     // For each script to execute
-                    var scripts = GetScriptsInBlock(block, executionDescriptor.Path, configuration.WorkingDirectory);
+                    var scripts = block.ScriptNames.Select(sn => Path.Combine(configuration.WorkingDirectory, sn));
                     foreach (var script in scripts)
                     {
                         Log($"Executing script {script}");
@@ -126,12 +126,12 @@ namespace DBUpdate_Client
                         }
 
                         // Update the DB to indicate that the script has been executed (incl. block details)
-                        LogScriptExecution(connectionString, block, script, run.Id);
+                        LogScriptExecution(connectionString, block.Name, script, run.Id);
                     }
                 }
 
                 // Update the Run in DB
-                EndRun(connectionString, run.Id);
+                run.Close();
             }
             else
             {
@@ -141,11 +141,9 @@ namespace DBUpdate_Client
         private void Log(string message) => this.logger.LogMessage(message);
         private string GetConnectionString(string connectionStringName) => configurationProvider.GetConnectionString(connectionStringName);
         private bool ConnectionStringIsValid(string connectionString) => !String.IsNullOrWhiteSpace(connectionString);
-        private static IEnumerable<string> GetBlocksToExecute(string configFilePath) => XDocument.Load(configFilePath).Root.Element("blocksToExecute").Elements("block").Select(b => b.Value).ToArray();
-        private static IEnumerable<string> GetScriptsInBlock(string blockName, string configFilePath, string workingDir) => XDocument.Load(configFilePath).Root.Element("blockDefinitions").Elements("blockDefinition").Single(e => e.Attribute("name").Value == blockName).Elements("script").Select(e => Path.Combine(workingDir, e.Value)).ToArray();
-        private static IEnumerable<string> RemoveBlocksAlreadyExecuted(IEnumerable<string> blocksToExecute, string connectionString)
+        private static IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, string connectionString)
         {
-            IList<string> alreadyExecuted = new List<string>();
+            IList<DBUpdateExecutionBlockDescriptor> alreadyExecuted = new List<DBUpdateExecutionBlockDescriptor>();
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -162,7 +160,11 @@ namespace DBUpdate_Client
                         while (reader.Read())
                         {
                             string blockName = reader.GetString(0);
-                            alreadyExecuted.Add(blockName);
+                            var block = blocksToExecute.FirstOrDefault(b => b.Name == blockName);
+                            if (block != null)
+                            {
+                                alreadyExecuted.Add(block);
+                            }
                         }
                     }
                 }
@@ -197,23 +199,6 @@ namespace DBUpdate_Client
                     command.Parameters.AddWithValue("@RunId", runId);
                     command.Parameters.AddWithValue("@BlockName", blockName);
                     command.Parameters.AddWithValue("@ScriptName", scriptPath);
-
-                    connection.Open();
-
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-        private static void EndRun(string connectionString, int runId)
-        {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = @"UPDATE dbupdate.Run SET EndDate = GETDATE() WHERE RunId = @RunId;";
-                    command.Parameters.AddWithValue("@RunId", runId);
 
                     connection.Open();
 

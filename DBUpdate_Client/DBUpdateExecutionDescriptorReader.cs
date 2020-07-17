@@ -18,6 +18,28 @@ namespace DBUpdate_Client
                 .SetPath(filePath)
                 .SetConnectionStringName(connectionStringName);
 
+            DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
+            foreach(var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
+            {
+                blockBuilder.Reset();
+
+                foreach(var scriptElement in blockElement.Elements("script"))
+                {
+                    string script = scriptElement.Value;
+
+                    blockBuilder.AddScriptName(script);
+                }
+
+                DBUpdateExecutionBlockDescriptor block = blockBuilder.Build();
+                builder.AddBlock(block);
+            }
+            foreach(var blockToExecuteElement in descriptor.Root.Element("blocksToExecute").Elements("block"))
+            {
+                string blockName = blockToExecuteElement.Value;
+
+                builder.AddBlockToExecute(blockName);
+            }
+
             return builder.Build();
         }
 

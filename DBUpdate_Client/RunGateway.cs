@@ -34,5 +34,22 @@ namespace DBUpdate_Client
                 }
             }
         }
+        public void CloseInstance(int runId)
+        {
+            using (var connection = connectionProvider.GetConnection())
+            {
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = @"UPDATE dbupdate.Run SET EndDate = GETDATE() WHERE RunId = @RunId;";
+                    command.Parameters.AddWithValue("@RunId", runId);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

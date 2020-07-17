@@ -15,5 +15,6 @@
         }
 
         public void Create() => Id = gateway.CreateInstance();
+        public void Close() => gateway.CloseInstance(Id);
     }
 }
