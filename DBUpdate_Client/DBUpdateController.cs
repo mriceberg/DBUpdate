@@ -80,7 +80,7 @@ namespace DBUpdate_Client
                 var blocksToExecute = executionDescriptor.BlocksToExecute;
 
                 // Check in DB until which blocks scripts have already been run
-                blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionString);
+                blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
 
                 // For each block not run yet
                 foreach (var block in blocksToExecute)
@@ -141,36 +141,12 @@ namespace DBUpdate_Client
         private void Log(string message) => this.logger.LogMessage(message);
         private string GetConnectionString(string connectionStringName) => configurationProvider.GetConnectionString(connectionStringName);
         private bool ConnectionStringIsValid(string connectionString) => !String.IsNullOrWhiteSpace(connectionString);
-        private static IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, string connectionString)
+        private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, ConnectionProvider connectionProvider)
         {
-            IList<DBUpdateExecutionBlockDescriptor> alreadyExecuted = new List<DBUpdateExecutionBlockDescriptor>();
+            ScriptGateway scriptGateway = new ScriptGateway(connectionProvider);
+            var executedBlockNames = scriptGateway.GetExecutedScriptNames().Select(sn => blocksToExecute.FirstOrDefault(bte => bte.Name == sn)).Where(b => b != null);
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = @"SELECT DISTINCT BlockName FROM dbupdate.Script";
-
-                    connection.Open();
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string blockName = reader.GetString(0);
-                            var block = blocksToExecute.FirstOrDefault(b => b.Name == blockName);
-                            if (block != null)
-                            {
-                                alreadyExecuted.Add(block);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return blocksToExecute.Except(alreadyExecuted);
+            return blocksToExecute.Except(executedBlockNames).ToArray();
         }
         private static void ExecuteBatch(IEnumerable<string> batch, string connectionString)
         {
