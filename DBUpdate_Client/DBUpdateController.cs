@@ -70,9 +70,11 @@ namespace DBUpdate_Client
                 CheckDBStructure(connectionProvider);
 
                 // Create the Run in DB
-                RunGateway run = new RunGateway(connectionProvider);
-                var runId = run.CreateInstance();
-                Log($"Run {runId} created.");
+                RunGateway runGateway = new RunGateway(connectionProvider);
+                DBUpdateRun run = new DBUpdateRun(runGateway);
+                run.Create();
+
+                Log($"Run {run.Id} created.");
 
                 // Read the list of blocks required to reach the expected state in the correct order
                 var blocksToExecute = GetBlocksToExecute(executionDescriptor.Path);
@@ -124,12 +126,12 @@ namespace DBUpdate_Client
                         }
 
                         // Update the DB to indicate that the script has been executed (incl. block details)
-                        LogScriptExecution(connectionString, block, script, runId);
+                        LogScriptExecution(connectionString, block, script, run.Id);
                     }
                 }
 
                 // Update the Run in DB
-                EndRun(connectionString, runId);
+                EndRun(connectionString, run.Id);
             }
             else
             {
