@@ -39,5 +39,24 @@ namespace DBUpdate_Client
 
             return alreadyExecuted;
         }
+        public void RecordExecution(int runId, string blockName, string scriptPath)
+        {
+            using (var connection = connectionProvider.GetConnection())
+            {
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = @"INSERT INTO dbupdate.Script (RunId, BlockName, ScriptName) VALUES (@RunId, @BlockName, @ScriptName);";
+                    command.Parameters.AddWithValue("@RunId", runId);
+                    command.Parameters.AddWithValue("@BlockName", blockName);
+                    command.Parameters.AddWithValue("@ScriptName", scriptPath);
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

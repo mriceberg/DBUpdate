@@ -126,7 +126,7 @@ namespace DBUpdate_Client
                         }
 
                         // Update the DB to indicate that the script has been executed (incl. block details)
-                        LogScriptExecution(connectionString, block.Name, script, run.Id);
+                        LogScriptExecution(connectionProvider, block.Name, script, run.Id);
                     }
                 }
 
@@ -163,24 +163,9 @@ namespace DBUpdate_Client
                 }
             }
         }
-        private static void LogScriptExecution(string connectionString, string blockName, string scriptPath, int runId)
+        private static void LogScriptExecution(ConnectionProvider connectionProvider, string blockName, string scriptPath, int runId)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = @"INSERT INTO dbupdate.Script (RunId, BlockName, ScriptName) VALUES (@RunId, @BlockName, @ScriptName);";
-                    command.Parameters.AddWithValue("@RunId", runId);
-                    command.Parameters.AddWithValue("@BlockName", blockName);
-                    command.Parameters.AddWithValue("@ScriptName", scriptPath);
-
-                    connection.Open();
-
-                    command.ExecuteNonQuery();
-                }
-            }
+            new ScriptGateway(connectionProvider).RecordExecution(runId, blockName, scriptPath);
         }
         private void CheckDBStructure(ConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
         private static IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
