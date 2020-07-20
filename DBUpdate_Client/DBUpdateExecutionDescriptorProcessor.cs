@@ -50,18 +50,16 @@ namespace DBUpdate_Client
             foreach (var block in blocksToExecute)
             {
                 Log($"Checking block {block}");
-                // Read the block definition
-                var scripts = block.Scripts.Select(s => Path.Combine(configuration.WorkingDirectory, s.Name));
 
                 // For each script to execute
-                foreach (var script in scripts)
+                foreach (var script in block.Scripts)
                 {
                     Log($"Checking script {script}");
                     // Check that the script is available
-                    if (!File.Exists(script))
+                    if (script.Exists)
                     {
                         // Fail if the script is missing
-                        throw new FileNotFoundException($"Missing script in block {block}. ", script);
+                        throw new FileNotFoundException($"Missing script in block {block}. ", script.FullPath);
                     }
                 }
             }

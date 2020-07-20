@@ -3,6 +3,7 @@
     public class DBUpdateScriptBuilder
     {
         private string name;
+        private string path;
 
         public DBUpdateScriptBuilder()
         {
@@ -12,6 +13,7 @@
         public DBUpdateScriptBuilder Reset()
         {
             this.name = null;
+            this.path = null;
 
             return this;
         }
@@ -22,8 +24,14 @@
 
             return this;
         }
+        public DBUpdateScriptBuilder SetPath(string value)
+        {
+            this.path = value;
+
+            return this;
+        }
 
         public DBUpdateScript Build()
-            => new DBUpdateScript(name);
+            => new DBUpdateScript(name, path);
     }
 }
