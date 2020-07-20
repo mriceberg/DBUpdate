@@ -5,12 +5,12 @@ namespace DBUpdate_Client
     public class DBUpdateExecutionBlockDescriptor
     {
         public string Name { get; private set; }
-        public IEnumerable<string> ScriptNames { get; private set; }
+        public IEnumerable<DBUpdateScript> Scripts { get; private set; }
 
-        public DBUpdateExecutionBlockDescriptor(string name, IEnumerable<string> scriptNames)
+        public DBUpdateExecutionBlockDescriptor(string name, IEnumerable<DBUpdateScript> scripts)
         {
             this.Name = name;
-            this.ScriptNames = scriptNames;
+            this.Scripts = scripts;
         }
     }
 }

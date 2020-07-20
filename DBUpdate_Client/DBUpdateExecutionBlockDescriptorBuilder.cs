@@ -5,7 +5,7 @@ namespace DBUpdate_Client
     public class DBUpdateExecutionBlockDescriptorBuilder
     {
         private string name;
-        private IList<string> scriptNames;
+        private IList<DBUpdateScript> scripts;
 
         public DBUpdateExecutionBlockDescriptorBuilder()
         {
@@ -15,7 +15,7 @@ namespace DBUpdate_Client
         public DBUpdateExecutionBlockDescriptorBuilder Reset()
         {
             name = null;
-            scriptNames = new List<string>();
+            scripts = new List<DBUpdateScript>();
 
             return this;
         }
@@ -26,14 +26,14 @@ namespace DBUpdate_Client
 
             return this;
         }
-        public DBUpdateExecutionBlockDescriptorBuilder AddScriptName(string value)
+        public DBUpdateExecutionBlockDescriptorBuilder AddScript(DBUpdateScript value)
         {
-            scriptNames.Add(value);
+            scripts.Add(value);
 
             return this;
         }
 
         public DBUpdateExecutionBlockDescriptor Build()
-            => new DBUpdateExecutionBlockDescriptor(name, scriptNames);
+            => new DBUpdateExecutionBlockDescriptor(name, scripts);
     }
 }

@@ -19,15 +19,18 @@ namespace DBUpdate_Client
                 .SetConnectionStringName(connectionStringName);
 
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
-            foreach(var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
+            DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
+            foreach (var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
             {
                 blockBuilder.Reset();
 
                 foreach(var scriptElement in blockElement.Elements("script"))
                 {
-                    string script = scriptElement.Value;
-
-                    blockBuilder.AddScriptName(script);
+                    string scriptName = scriptElement.Value;
+                    scriptBuilder.Reset();
+                    scriptBuilder.SetName(scriptName);
+                    var script = scriptBuilder.Build();
+                    blockBuilder.AddScript(script);
                 }
 
                 DBUpdateExecutionBlockDescriptor block = blockBuilder.Build();

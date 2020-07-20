@@ -87,7 +87,7 @@ namespace DBUpdate_Client
                 {
                     Log($"Checking block {block}");
                     // Read the block definition
-                    var scripts = block.ScriptNames.Select(sn => Path.Combine(configuration.WorkingDirectory, sn));
+                    var scripts = block.Scripts.Select(s => Path.Combine(configuration.WorkingDirectory, s.Name));
 
                     // For each script to execute
                     foreach (var script in scripts)
@@ -108,7 +108,7 @@ namespace DBUpdate_Client
                     Log($"Executing block {block}");
 
                     // For each script to execute
-                    var scripts = block.ScriptNames.Select(sn => Path.Combine(configuration.WorkingDirectory, sn));
+                    var scripts = block.Scripts.Select(sn => Path.Combine(configuration.WorkingDirectory, sn.Name));
                     foreach (var script in scripts)
                     {
                         Log($"Executing script {script}");
