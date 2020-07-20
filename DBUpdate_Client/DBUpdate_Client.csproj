@@ -59,6 +59,7 @@
     <Compile Include="DBUpdateExecutionBlockDescriptorBuilder.cs" />
     <Compile Include="DBUpdateExecutionDescriptor.cs" />
     <Compile Include="DBUpdateExecutionDescriptorBuilder.cs" />
+    <Compile Include="DBUpdateExecutionDescriptorProcessor.cs" />
     <Compile Include="DBUpdateExecutionDescriptorReader.cs" />
     <Compile Include="DBUpdateRun.cs" />
     <Compile Include="DBUpdateScript.cs" />
