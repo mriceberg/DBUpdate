@@ -42,7 +42,7 @@ namespace DBUpdate_Client
                 {
                     command.Connection = connection;
                     command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = @"UPDATE dbupdate.Run SET EndDate = GETDATE() WHERE RunId = @RunId;";
+                    command.CommandText = @"UPDATE dbupdate.Run SET EndDate = GETDATE() WHERE Id = @RunId;";
                     command.Parameters.AddWithValue("@RunId", runId);
 
                     connection.Open();

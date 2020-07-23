@@ -49,14 +49,14 @@ namespace DBUpdate_Client
             // For each block not run yet
             foreach (var block in blocksToExecute)
             {
-                Log($"Checking block {block}");
+                Log($"Checking block {block.Name}");
 
                 // For each script to execute
                 foreach (var script in block.Scripts)
                 {
-                    Log($"Checking script {script}");
+                    Log($"Checking script {script.Name}");
                     // Check that the script is available
-                    if (script.Exists)
+                    if (!script.Exists)
                     {
                         // Fail if the script is missing
                         throw new FileNotFoundException($"Missing script in block {block}. ", script.FullPath);
