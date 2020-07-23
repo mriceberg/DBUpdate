@@ -11,6 +11,7 @@ namespace DBUpdate_Client
             Logger logger = utils.MakeLogger();
 
             DBUpdateController controller = new DBUpdateController(configurationProvider, logger);
+            controller.Execute();
 
             Console.ReadLine();
         }
