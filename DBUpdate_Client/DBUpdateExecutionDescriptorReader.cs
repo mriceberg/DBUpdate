@@ -24,8 +24,8 @@ namespace DBUpdate_Client
             foreach (var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
             {
                 blockBuilder.Reset();
-                string blockName = blockElement.Attribute("name");
-                blockBuilder.SetName(name);
+                string blockName = blockElement.Attribute("name").Value;
+                blockBuilder.SetName(blockName);
 
                 foreach(var scriptElement in blockElement.Elements("script"))
                 {
