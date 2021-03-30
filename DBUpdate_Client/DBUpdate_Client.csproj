@@ -51,6 +51,7 @@
     <Compile Include="ConnectionProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ConstantConnectionProvider.cs" />
+    <Compile Include="DBUpdateCheck.cs" />
     <Compile Include="DBUpdateController.cs" />
     <Compile Include="DBUpdateConfiguration.cs" />
     <Compile Include="DBUpdateConfigurationBuilder.cs" />
@@ -61,6 +62,9 @@
     <Compile Include="DBUpdateExecutionDescriptorBuilder.cs" />
     <Compile Include="DBUpdateExecutionDescriptorProcessor.cs" />
     <Compile Include="DBUpdateExecutionDescriptorReader.cs" />
+    <Compile Include="DBUpdateParameters.cs" />
+    <Compile Include="DBUpdateParametersBuilder.cs" />
+    <Compile Include="DBUpdateParametersReader.cs" />
     <Compile Include="DBUpdateRun.cs" />
     <Compile Include="DBUpdateScript.cs" />
     <Compile Include="DBUpdateScriptBuilder.cs" />

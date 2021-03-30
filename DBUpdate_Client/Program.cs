@@ -4,18 +4,21 @@ namespace DBUpdate_Client
 {
     class Program
     {
+        private static DBUpdateParameters parameters;
         static void Main(string[] args)
         {
-            UtilFactory utils = new DefaultUtilFactory();
-            ConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
-            Logger logger = utils.MakeLogger();
+            parameters = new DBUpdateParametersReader(args).Read();
+            DBUpdateCheck check = new DBUpdateCheck(parameters.IsTest, parameters.MustCheck);
+            check.StartTest();
 
-            DBUpdateController controller = new DBUpdateController(configurationProvider, logger);
-            controller.Execute();
+            //UtilFactory utils = new DefaultUtilFactory();
+            //ConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
+            //Logger logger = utils.MakeLogger();
 
-            Console.ReadLine();
+            //DBUpdateController controller = new DBUpdateController(configurationProvider, logger);
+            //controller.Execute();
+
+            //Console.ReadLine();
         }
-
-
     }
 }
