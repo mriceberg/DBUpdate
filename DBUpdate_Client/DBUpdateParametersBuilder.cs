@@ -9,7 +9,6 @@ namespace DBUpdate_Client
     public class DBUpdateParametersBuilder
     {
         private bool isTest;
-
         public DBUpdateParametersBuilder()
         {
             Reset();
@@ -18,14 +17,12 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder Reset()
         {
             this.isTest = false;
-
             return this;
         }
 
         public DBUpdateParametersBuilder SetIsTest(bool value)
         {
             this.isTest = value;
-
             return this;
         }
      

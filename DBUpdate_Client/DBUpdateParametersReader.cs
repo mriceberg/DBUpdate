@@ -14,16 +14,12 @@ namespace DBUpdate_Client
             this.args = args;
         }
 
-        public DBUpdateParameters Read() => new DBUpdateParametersBuilder()
+        public DBUpdateParameters Read => new DBUpdateParametersBuilder()
             .SetIsTest(ReadIsTest())
-            .SetMustCheck(ReadMustCheck())
             .Build();
 
         protected bool ReadIsTest() =>
             this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("-TEST") || this.args.Contains("-T");
-
-        protected bool ReadMustCheck() =>
-            this.args.Contains("--check") || this.args.Contains("-c") || this.args.Contains("-CHECK") || this.args.Contains("-C");
 
     }
 }

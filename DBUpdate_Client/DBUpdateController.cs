@@ -27,7 +27,10 @@ namespace DBUpdate_Client
         }
 
         private DBUpdateConfiguration ReadConfiguration() => new DBUpdateConfigurationReader(this.configurationProvider).Read();
-        private IEnumerable<DBUpdateExecutionDescriptor> ReadExecutionDescriptors() => new DBUpdateExecutionDescriptorReader().ReadAll(this.configuration.WorkingDirectory);
+        private IEnumerable<DBUpdateExecutionDescriptor> ReadExecutionDescriptors() => 
+            new DBUpdateExecutionDescriptorReader()
+            .ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this.configuration.WorkingDirectory));
+
         private void ProcessExecutionDescriptors(IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors)
         {
             foreach (var executionDescriptor in executionDescriptors)

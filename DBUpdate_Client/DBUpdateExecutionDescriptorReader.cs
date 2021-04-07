@@ -7,11 +7,11 @@ namespace DBUpdate_Client
 {
     public class DBUpdateExecutionDescriptorReader
     {
-        public IEnumerable<DBUpdateExecutionDescriptor> ReadAll(string folder)
-            => GetFilesToRead(folder).Select(file => Read(folder, file));
-        public DBUpdateExecutionDescriptor Read(string fileFolder, string fileName)
+        public IEnumerable<DBUpdateExecutionDescriptor> ReadAll(IEnumerable<string> files)
+            => files.Select(file => Read(file));
+        public DBUpdateExecutionDescriptor Read(string filePath)
         {
-            var filePath = Path.Combine(fileFolder, fileName);
+            string fileFolder = Path.GetDirectoryName(filePath);
             XDocument descriptor = XDocument.Load(filePath);
             string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
             
@@ -49,7 +49,5 @@ namespace DBUpdate_Client
 
             return builder.Build();
         }
-
-        private IEnumerable<string> GetFilesToRead(string folder) => Directory.EnumerateFiles(folder, "Scripts*.xml");
     }
 }

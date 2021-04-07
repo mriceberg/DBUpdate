@@ -13,6 +13,5 @@ namespace DBUpdate_Client
         {
             IsTest = isTest;
         }
-
     }
 }
