@@ -8,7 +8,7 @@ namespace DBUpdate_Client
         static void Main(string[] args)
         {
             parameters = new DBUpdateParametersReader(args).Read();
-            DBUpdateCheck check = new DBUpdateCheck(parameters.IsTest, parameters.MustCheck);
+            DBUpdateCheck check = new DBUpdateCheck(parameters.IsTest);
             check.StartTest();
 
             //UtilFactory utils = new DefaultUtilFactory();

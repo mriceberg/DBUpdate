@@ -9,7 +9,7 @@ namespace DBUpdate_Client
     public class DBUpdateParametersBuilder
     {
         private bool isTest;
-        private bool mustCheck;
+
         public DBUpdateParametersBuilder()
         {
             Reset();
@@ -18,7 +18,6 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder Reset()
         {
             this.isTest = false;
-            this.mustCheck = false;
 
             return this;
         }
@@ -29,21 +28,11 @@ namespace DBUpdate_Client
 
             return this;
         }
-
-        public DBUpdateParametersBuilder SetMustCheck(bool value)
-        {
-            this.mustCheck = value;
-
-            return this;
-        }
-
+     
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, mustCheck);
+            return new DBUpdateParameters(isTest);
         }
-
-        //protected override bool ReadIsTest() => this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("/test");
-        //protected override bool ReadMustCheck() => this.args.Contains("--check");
 
     }
 }

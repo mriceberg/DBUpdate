@@ -9,11 +9,9 @@ namespace DBUpdate_Client
     public class DBUpdateParameters
     {
         public bool IsTest { get; private set; }
-        public bool MustCheck { get; private set; }
-        public DBUpdateParameters(bool isTest, bool mustCheck)
+        public DBUpdateParameters(bool isTest)
         {
             IsTest = isTest;
-            MustCheck = mustCheck;
         }
 
     }

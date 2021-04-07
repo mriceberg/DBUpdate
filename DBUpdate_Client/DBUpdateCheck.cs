@@ -13,17 +13,10 @@ namespace DBUpdate_Client
     public class DBUpdateCheck
     {
         public bool IsTest;
-        public bool MustCheck;
-        private string fileFolder;
-        private string fileName;
 
-        //public IEnumerable<DBUpdateExecutionDescriptor> ReadAll(string folder)
-        //=> GetFilesToRead(folder).Select(file => CheckXML(folder, file));
-
-        public DBUpdateCheck(bool isTest, bool mustCheck)
+        public DBUpdateCheck(bool isTest)
         {
             this.IsTest = isTest;
-            this.MustCheck = mustCheck;
         }
 
         public void StartTest()
@@ -31,11 +24,6 @@ namespace DBUpdate_Client
             if (IsTest)
             {
                 TestIsTest();
-            }
-
-            if (MustCheck)
-            {
-                TestMustCheck();
             }
         }
 
@@ -45,26 +33,12 @@ namespace DBUpdate_Client
             //ReadExecutionDescriptors();
         }
 
-        private void TestMustCheck()
-        {
-
-        }
-
         private void CheckXML(string fileFolder, string fileName)
         {
             var filePath = Path.Combine(fileFolder, fileName);
            
             try
             {
-                ////XDocument xd1 = new XDocument();
-                //var xmlSchema = new XmlSchemaSet();
-                //xmlSchema.Add("c:\\temp\\workingdir\\ScriptsETT", "c:\\temp\\workingdir\\ScriptsETT.xsd");
-                //XDocument descriptor = XDocument.Load(filePath);
-
-                //descriptor.Validate(xmlSchema, (o, e) => {
-
-                //    Console.WriteLine("Your XML was probably bad. ......" + e.Message + e.Severity);
-                //});
 
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.Schemas.Add(null, @"c:\temp\workingdir\ScriptsETT.xsd");
@@ -101,21 +75,6 @@ namespace DBUpdate_Client
                 Console.WriteLine("\tValidation error: " + args.Message);
 
         }
-
-        //private IEnumerable<string> GetFilesToRead(string folder) => Directory.EnumerateFiles(folder, "Scripts*.xml");
-
-        //private IEnumerable<DBUpdateExecutionDescriptor> ReadExecutionDescriptors() => new DBUpdateExecutionDescriptorReader().ReadAll("c:\\temp\\workingdir");
-
-        //public IEnumerable<DBUpdateExecutionDescriptor> ReadAll(string folder)
-        //    => GetFilesToRead(folder).Select(file => Read(folder, file));
-
-        //public DBUpdateExecutionDescriptor Read(string fileFolder, string fileName)
-        //{
-        //    var filePath = Path.Combine(fileFolder, fileName);
-        //    XDocument descriptor = XDocument.Load(filePath);
-
-        //    return null;
-        //}
 
     }
 }
