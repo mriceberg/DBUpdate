@@ -85,6 +85,18 @@ namespace DBUpdate_Client
             descriptorBlockDefinition descriptorBlockDefinition = new descriptorBlockDefinition();
             string[] lgt = descriptorBlockDefinition.script;
 
+
+
+
+
+
+
+
+
+
+
+
+
             //foreach (string test in lgt)
             //{
             //    // test = document.Root.Element("blockDefinitions").Element("blockDefinition").Element("script").Value;
@@ -105,8 +117,6 @@ namespace DBUpdate_Client
             //        var script = scriptBuilder.Build();
             //    }
             //}
-
-
         }
 
 

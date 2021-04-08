@@ -9,6 +9,7 @@ namespace DBUpdate_Client
     public class DBUpdateParametersReader
     {
         private readonly string[] args;
+
         public DBUpdateParametersReader(string[] args)
         {
             this.args = args;
@@ -19,7 +20,7 @@ namespace DBUpdate_Client
             .Build();
 
         protected bool ReadIsTest() =>
-            this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("-TEST") || this.args.Contains("-T");
+            this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("--TEST") || this.args.Contains("-T");
 
     }
 }

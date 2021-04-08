@@ -15,7 +15,6 @@ namespace DBUpdate_Client
             this.configurationProvider = configuration;
             this.logger = logger;
         }
-
         public void Execute()
         {
             this.configuration = ReadConfiguration();

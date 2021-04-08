@@ -9,6 +9,7 @@ namespace DBUpdate_Client
     public class DBUpdateParameters
     {
         public bool IsTest { get; private set; }
+
         public DBUpdateParameters(bool isTest)
         {
             IsTest = isTest;
