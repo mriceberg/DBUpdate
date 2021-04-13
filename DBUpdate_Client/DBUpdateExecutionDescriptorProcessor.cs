@@ -46,23 +46,6 @@ namespace DBUpdate_Client
             // Check in DB until which blocks scripts have already been run
             blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
 
-            // For each block not run yet
-            foreach (var block in blocksToExecute)
-            {
-                Log($"Checking block {block.Name}");
-
-                // For each script to execute
-                foreach (var script in block.Scripts)
-                {
-                    Log($"Checking script {script.Name}");
-                    // Check that the script is available
-                    if (!script.Exists)
-                    {
-                        // Fail if the script is missing
-                        throw new FileNotFoundException($"Missing script in block {block}. ", script.FullPath);
-                    }
-                }
-            }
 
             // For each block not run yet
             foreach (var block in blocksToExecute)
@@ -104,6 +87,9 @@ namespace DBUpdate_Client
 
             return blocksToExecute.Except(executedBlockNames).ToArray();
         }
+
+
+        // TODO: Ici qu'il y a les batchs
         private static IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
         {
             var result = new List<IEnumerable<string>>();

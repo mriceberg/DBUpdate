@@ -9,17 +9,23 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 
 
+// TODO: Remplacer Console.WriteLine par _logger.LogMessage
+
 namespace DBUpdate_Client
 {
     public class DBUpdateCheck
     {
+        private readonly Logger _logger;
         private readonly DBUpdateParameters _param;
         private readonly DBUpdateConfiguration _config;
 
         private XmlDocument _document;
 
-        public DBUpdateCheck(DBUpdateParameters param, ConfigurationProvider configurationProvider)
+        public DBUpdateCheck(Logger logger, DBUpdateParameters param, ConfigurationProvider configurationProvider)
         {
+            if (_logger == null) throw new ArgumentNullException(nameof(logger));
+
+            _logger = logger;
             _param = param;
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
         }
@@ -31,20 +37,20 @@ namespace DBUpdate_Client
                 TestIsTest();
             }
         }
-        
+
         private void TestIsTest()
         {
             foreach (var file in new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory))
             {
                 CheckXML(file);
-                CheckSqlRefInBlock();
+                CheckSqlRefInBlock(file);
             }
         }
 
         private void CheckXML(string filePath)
         {
             var fileFolder = Path.GetDirectoryName(filePath);
-           
+
             try
             {
                 XmlReaderSettings settings = new XmlReaderSettings();
@@ -64,10 +70,12 @@ namespace DBUpdate_Client
                 XmlReader reader = XmlReader.Create(filePath, settings);
 
                 // Parse the file. 
-                while (reader.Read());
+                while (reader.Read()) ;
 
-            } catch (XmlSchemaValidationException exception) {
-                Console.WriteLine("Your XML was probably bad..." + "Exception :" + exception);
+            }
+            catch (XmlSchemaValidationException exception)
+            {
+                Log("Your XML was probably bad..." + "Exception :" + exception);
             }
         }
 
@@ -80,161 +88,42 @@ namespace DBUpdate_Client
                 Console.WriteLine("\tValidation error: " + args.Message);
 
         }
-        private void CheckSqlRefInBlock()
+        private void CheckSqlRefInBlock(string filePath)
         {
-            descriptorBlockDefinition descriptorBlockDefinition = new descriptorBlockDefinition();
-            string[] lgt = descriptorBlockDefinition.script;
+            // TODO: Vérifier que les BlocksToExecute existent bien dans les Blocks
+            DBUpdateExecutionDescriptorReader dBUpdateExecutionDescriptorReader = new DBUpdateExecutionDescriptorReader();
+            var descriptor = dBUpdateExecutionDescriptorReader.Read(filePath);
 
-
-
-
-
-
-
-
-
-
-
-
-
-            //foreach (string test in lgt)
-            //{
-            //    // test = document.Root.Element("blockDefinitions").Element("blockDefinition").Element("script").Value;
-            //    Console.WriteLine(test);
-
-            //}
-
-            //DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
-            //foreach (var blockElement in document.Root.Element("blockDefinitions").Elements("blockDefinition"))
-            //{
-            //    string blockName = blockElement.Attribute("name").Value;
-
-            //    foreach (var scriptElement in blockElement.Elements("script"))
-            //    {
-            //        string scriptName = scriptElement.Value;
-            //        scriptBuilder.Reset();
-            //        scriptBuilder.SetName(scriptName);
-            //        var script = scriptBuilder.Build();
-            //    }
-            //}
-        }
-
-
-        // REMARQUE : Le code généré peut nécessiter au moins .NET Framework 4.5 ou .NET Core/Standard 2.0.
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
-        public partial class descriptor
-        {
-            private descriptorConfiguration configurationField;
-            private descriptorBlockDefinition[] blockDefinitionsField;
-            private string[] blocksToExecuteField;
-
-            /// <remarks/>
-            public descriptorConfiguration configuration
+            // For each block not run yet
+            foreach (var block in descriptor.BlocksToExecute)
             {
-                get
-                {
-                    return this.configurationField;
-                }
-                set
-                {
-                    this.configurationField = value;
-                }
-            }
+                Log($"Checking block {block.Name}");
 
-            /// <remarks/>
-            [System.Xml.Serialization.XmlArrayItemAttribute("blockDefinition", IsNullable = false)]
-            public descriptorBlockDefinition[] blockDefinitions
-            {
-                get
+                // For each script to execute
+                foreach (var script in block.Scripts)
                 {
-                    return this.blockDefinitionsField;
-                }
-                set
-                {
-                    this.blockDefinitionsField = value;
-                }
-            }
-
-            /// <remarks/>
-            [System.Xml.Serialization.XmlArrayItemAttribute("block", IsNullable = false)]
-            public string[] blocksToExecute
-            {
-                get
-                {
-                    return this.blocksToExecuteField;
-                }
-                set
-                {
-                    this.blocksToExecuteField = value;
+                    Log($"Checking script {script.Name}");
+                    // Check that the script is available
+                    if (!script.Exists)
+                    {
+                        // Fail if the script is missing
+                        throw new FileNotFoundException($"Missing script in block {block}. ", script.FullPath);
+                    }
                 }
             }
         }
 
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        public partial class descriptorConfiguration
+        // TODO: Warn if empty batch (créer une méthode etc)
+        private void checkBatchGoCommentedInMultiLineComment()
         {
 
-            private string connectionStringNameField;
-
-            /// <remarks/>
-            public string connectionStringName
-            {
-                get
-                {
-                    return this.connectionStringNameField;
-                }
-                set
-                {
-                    this.connectionStringNameField = value;
-                }
-            }
         }
 
-        /// <remarks/>
-        [System.SerializableAttribute()]
-        [System.ComponentModel.DesignerCategoryAttribute("code")]
-        [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-        public partial class descriptorBlockDefinition
-        {
+        // TODO: Pendant l'exécution des scripts SQL, ils sont divisés en lots "batches", séparés par des lignes contenant le mot GO et rien d'autre. Lorsque cette ligne se trouve dans un commentaire de plusieurs lignes, elle doit être ignorée.
 
-            private string[] scriptField;
-            private string nameField;
 
-            /// <remarks/>
-            [System.Xml.Serialization.XmlElementAttribute("script")]
-            public string[] script
-            {
-                get
-                {
-                    return this.scriptField;
-                }
-                set
-                {
-                    this.scriptField = value;
-                }
-            }
-
-            /// <remarks/>
-            [System.Xml.Serialization.XmlAttributeAttribute()]
-            public string name
-            {
-                get
-                {
-                    return this.nameField;
-                }
-                set
-                {
-                    this.nameField = value;
-                }
-            }
-        }
-
+        // TODO: When GO is the last line of the file, execution crashes.
+        
+        private void Log(string message) => this._logger?.LogMessage(message);
     }
 }

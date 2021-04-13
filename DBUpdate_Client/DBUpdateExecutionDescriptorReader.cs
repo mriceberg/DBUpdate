@@ -40,6 +40,7 @@ namespace DBUpdate_Client
                 DBUpdateExecutionBlockDescriptor block = blockBuilder.Build();
                 builder.AddBlock(block);
             }
+
             foreach(var blockToExecuteElement in descriptor.Root.Element("blocksToExecute").Elements("block"))
             {
                 string blockName = blockToExecuteElement.Value;

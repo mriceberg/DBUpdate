@@ -10,7 +10,6 @@ namespace DBUpdate_Client
     public class DBUpdateExecutionDescriptorProvider
     {
         private const string SearchPattern = "Scripts*.xml";
-
         public IEnumerable<string> GetFilesToRead(string folder) => Directory.EnumerateFiles(folder, SearchPattern);
     }
 }
