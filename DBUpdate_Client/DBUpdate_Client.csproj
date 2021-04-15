@@ -70,6 +70,7 @@
     <Compile Include="DBUpdateRun.cs" />
     <Compile Include="DBUpdateScript.cs" />
     <Compile Include="DBUpdateScriptBuilder.cs" />
+    <Compile Include="DBUpdateScriptToBatch.cs" />
     <Compile Include="DBUpdateStructureValidator.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
