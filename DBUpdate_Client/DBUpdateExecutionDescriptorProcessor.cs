@@ -47,6 +47,7 @@ namespace DBUpdate_Client
             blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
 
 
+
             // For each block not run yet
             foreach (var block in blocksToExecute)
             {
@@ -61,7 +62,7 @@ namespace DBUpdate_Client
                     string[] scriptText = File.ReadAllLines(script);
 
                     // Parse into batches according to GO
-                    var batches = SplitScriptIntoBatches(scriptText);
+                    var batches = new DBUpdateScriptToBatch().SplitScriptIntoBatches(scriptText);
 
                     // For each batch
                     foreach (var batch in batches)
@@ -90,31 +91,54 @@ namespace DBUpdate_Client
 
 
         // TODO: Ici qu'il y a les batchs
-        private static IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
+        private IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
         {
-            var result = new List<IEnumerable<string>>();
-            IList<string> currentBatch = new List<string>();
+            DBUpdateScriptToBatch dBUpdateScriptToBatch = new DBUpdateScriptToBatch();
+            return (IEnumerable<IEnumerable<string>>)dBUpdateScriptToBatch;
 
-            foreach (string line in scriptText)
-            {
-                if (line == "GO")
-                {
-                    result.Add(currentBatch);
-                    currentBatch = new List<string>();
-                }
-                else
-                {
-                    currentBatch.Add(line);
-                }
-            }
+            //var result = new List<IEnumerable<string>>();
+            //IList<string> currentBatch = new List<string>();
 
-            if (currentBatch.Count > 0)
-            {
-                result.Add(currentBatch);
-            }
+            //bool add = true;
 
-            return result;
+            //foreach (string line in scriptText)
+            //{
+            //    bool end = false;
+
+            //    if (line.StartsWith("/*"))
+            //    {
+            //        add = false;
+            //    }
+            //    if (line.StartsWith("*/"))
+            //    {
+            //        add = true;
+            //        end = true;
+            //    }
+
+            //    if (add && !end)
+            //    {
+            //        if (line == "GO")
+            //        {
+            //            result.Add(currentBatch);
+            //            currentBatch = new List<string>();
+            //        }
+            //        else
+            //        {
+            //            if (CheckBatchIsValid(line))
+            //            {
+            //                currentBatch.Add(line);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //if (currentBatch.Count > 0)
+            //{
+            //    result.Add(currentBatch);
+            //}
+            //return result;
         }
+
         private void ExecuteBatch(IEnumerable<string> batch)
         {
             using (var connection = connectionProvider.GetConnection())
@@ -134,5 +158,6 @@ namespace DBUpdate_Client
         {
             new ScriptGateway(connectionProvider).RecordExecution(runId, blockName, scriptPath);
         }
+
     }
 }

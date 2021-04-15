@@ -44,6 +44,7 @@ namespace DBUpdate_Client
             {
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
+                CheckBatchGoCommentedInMultiLineComment();
             }
         }
 
@@ -80,7 +81,7 @@ namespace DBUpdate_Client
         }
 
         // Display any warnings or errors.
-        private static void ValidationCallBack(object sender, ValidationEventArgs args)
+        private void ValidationCallBack(object sender, ValidationEventArgs args)
         {
             if (args.Severity == XmlSeverityType.Warning)
                 Console.WriteLine("\tWarning: Matching schema not found.  No validation occurred." + args.Message);
@@ -113,17 +114,58 @@ namespace DBUpdate_Client
             }
         }
 
-        // TODO: Warn if empty batch (créer une méthode etc)
-        private void checkBatchGoCommentedInMultiLineComment()
+        // TODO: Pendant l'exécution des scripts SQL, ils sont divisés en lots "batches", séparés par des lignes contenant le mot GO et rien d'autre. Lorsque cette ligne se trouve dans un commentaire de plusieurs lignes, elle doit être ignorée.
+        private void CheckBatchGoCommentedInMultiLineComment(IEnumerable<string> scriptText)
+        {
+            var result = new List<IEnumerable<string>>();
+            IList<string> currentBatch = new List<string>();
+
+            bool add = true;
+
+            foreach (string line in scriptText)
+            {
+                bool end = false;
+
+                if (line.StartsWith("/*"))
+                {
+                    add = false;
+                }
+                if (line.StartsWith("*/"))
+                {
+                    add = true;
+                    end = true;
+                }
+
+                if (add && !end)
+                {
+                    if (line == "GO")
+                    {
+                        result.Add(currentBatch);
+                        currentBatch = new List<string>();
+                    }
+                    else
+                    {
+                        if (CheckBatchIsValid(line))
+                        {
+                            currentBatch.Add(line);
+                        }
+                    }
+                }
+            }
+
+            if (currentBatch.Count > 0)
+            {
+                result.Add(currentBatch);
+            }
+            //return result;
+        }
+
+        // TODO: When GO is the last line of the file, execution crashes.
+        private void checkBatchGoInLastLine()
         {
 
         }
-
-        // TODO: Pendant l'exécution des scripts SQL, ils sont divisés en lots "batches", séparés par des lignes contenant le mot GO et rien d'autre. Lorsque cette ligne se trouve dans un commentaire de plusieurs lignes, elle doit être ignorée.
-
-
-        // TODO: When GO is the last line of the file, execution crashes.
-        
+        private bool CheckBatchIsValid(string line) => !String.IsNullOrWhiteSpace(line);
         private void Log(string message) => this._logger?.LogMessage(message);
     }
 }
