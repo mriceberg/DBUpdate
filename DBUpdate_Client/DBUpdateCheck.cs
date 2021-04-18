@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,25 +16,27 @@ namespace DBUpdate_Client
 {
     public class DBUpdateCheck
     {
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
         private readonly DBUpdateParameters _param;
         private readonly DBUpdateConfiguration _config;
 
         private XmlDocument _document;
 
-        public DBUpdateCheck(Logger logger, DBUpdateParameters param, ConfigurationProvider configurationProvider)
+        public DBUpdateCheck(ILogger logger, DBUpdateParameters param, ConfigurationProvider configurationProvider)
         {
-            if (_logger == null) throw new ArgumentNullException(nameof(logger));
-
             _logger = logger;
             _param = param;
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
+
+            if (_logger == null) throw new ArgumentNullException(nameof(logger));
         }
 
         public void StartTest()
         {
             if (_param.IsTest)
             {
+                _logger.LogMessage("Starting all the check ...");
+                _logger.LogFile("Starting all the test check ...");
                 TestIsTest();
             }
         }
@@ -44,7 +47,7 @@ namespace DBUpdate_Client
             {
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
-                CheckBatchGoCommentedInMultiLineComment();
+                CheckBatchGoCommentedInMultiLineComment(file);
             }
         }
 
@@ -115,57 +118,49 @@ namespace DBUpdate_Client
         }
 
         // TODO: Pendant l'exécution des scripts SQL, ils sont divisés en lots "batches", séparés par des lignes contenant le mot GO et rien d'autre. Lorsque cette ligne se trouve dans un commentaire de plusieurs lignes, elle doit être ignorée.
-        private void CheckBatchGoCommentedInMultiLineComment(IEnumerable<string> scriptText)
+        private void CheckBatchGoCommentedInMultiLineComment(string file)
         {
-            var result = new List<IEnumerable<string>>();
-            IList<string> currentBatch = new List<string>();
+            var batches = new DBUpdateFileScriptToBatch().GetScriptAndSplit(file);
 
-            bool add = true;
-
-            foreach (string line in scriptText)
+            foreach (IEnumerable<String> batch in batches)
             {
-                bool end = false;
+                int comment = 0;
 
-                if (line.StartsWith("/*"))
+                foreach (string line in batch)
                 {
-                    add = false;
-                }
-                if (line.StartsWith("*/"))
-                {
-                    add = true;
-                    end = true;
+
+                    if (line.StartsWith("/*"))
+                    {
+                        comment++;
+                    }
+
+                    if (line.StartsWith("*/"))
+                    {
+                        comment--;
+                    }
                 }
 
-                if (add && !end)
+                if (comment >= 1) { 
+                    Log("Error: There is a comment opening without closing ...");
+                }
+                if (comment < 0 )
                 {
-                    if (line == "GO")
-                    {
-                        result.Add(currentBatch);
-                        currentBatch = new List<string>();
-                    }
-                    else
-                    {
-                        if (CheckBatchIsValid(line))
-                        {
-                            currentBatch.Add(line);
-                        }
-                    }
+                    Log("Error: There is a comment closing without opening ...");
                 }
             }
 
-            if (currentBatch.Count > 0)
-            {
-                result.Add(currentBatch);
-            }
-            //return result;
+            CheckBatchGoInLastLine(batches);
         }
 
         // TODO: When GO is the last line of the file, execution crashes.
-        private void checkBatchGoInLastLine()
+        private void CheckBatchGoInLastLine(IEnumerable<IEnumerable<string>> batches)
         {
-
+            if (batches.Last().Last().StartsWith("GO") || batches.Last().ElementAt(batches.Count() - 1).StartsWith("GO"))
+            {
+                Log("Error: There is a GO in the last line of the file");
+            }
         }
-        private bool CheckBatchIsValid(string line) => !String.IsNullOrWhiteSpace(line);
+        //private bool CheckBatchIsValid(string line) => !String.IsNullOrWhiteSpace(line);
         private void Log(string message) => this._logger?.LogMessage(message);
     }
 }

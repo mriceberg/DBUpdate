@@ -3,6 +3,7 @@
     public class DefaultUtilFactory : UtilFactory
     {
         public ConfigurationProvider MakeConfigurationProvider() => new DefaultConfigurationProvider();
-        public Logger MakeLogger() => new ConsoleLogger();
+        public ILogger MakeLogger() => new MultiCastLogger();
+
     }
 }

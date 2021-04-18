@@ -64,6 +64,7 @@
     <Compile Include="DBUpdateExecutionDescriptorProcessor.cs" />
     <Compile Include="DBUpdateExecutionDescriptorProvider.cs" />
     <Compile Include="DBUpdateExecutionDescriptorReader.cs" />
+    <Compile Include="DBUpdateFileScriptToBatch.cs" />
     <Compile Include="DBUpdateParameters.cs" />
     <Compile Include="DBUpdateParametersBuilder.cs" />
     <Compile Include="DBUpdateParametersReader.cs" />
@@ -74,7 +75,9 @@
     <Compile Include="DBUpdateStructureValidator.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
+    <Compile Include="FileLogger.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="MultiCastLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunGateway.cs" />

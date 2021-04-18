@@ -3,6 +3,6 @@
     public interface UtilFactory
     {
         ConfigurationProvider MakeConfigurationProvider();
-        Logger MakeLogger();
+        ILogger MakeLogger();
     }
 }

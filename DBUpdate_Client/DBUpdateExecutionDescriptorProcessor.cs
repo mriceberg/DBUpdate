@@ -8,13 +8,13 @@ namespace DBUpdate_Client
 {
     public class DBUpdateExecutionDescriptorProcessor
     {
-        private readonly Logger logger;
+        private readonly ILogger logger;
         private readonly DBUpdateExecutionDescriptor executionDescriptor;
         private readonly ConfigurationProvider configurationProvider;
         private readonly DBUpdateConfiguration configuration;
         private readonly ConnectionProvider connectionProvider;
 
-        public DBUpdateExecutionDescriptorProcessor(Logger logger, DBUpdateExecutionDescriptor executionDescriptor, ConfigurationProvider configurationProvider, DBUpdateConfiguration configuration)
+        public DBUpdateExecutionDescriptorProcessor(ILogger logger, DBUpdateExecutionDescriptor executionDescriptor, ConfigurationProvider configurationProvider, DBUpdateConfiguration configuration)
         {
             this.logger = logger;
             this.executionDescriptor = executionDescriptor;
@@ -46,8 +46,6 @@ namespace DBUpdate_Client
             // Check in DB until which blocks scripts have already been run
             blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
 
-
-
             // For each block not run yet
             foreach (var block in blocksToExecute)
             {
@@ -59,10 +57,9 @@ namespace DBUpdate_Client
                 {
                     Log($"Executing script {script}");
                     // Read the script
-                    string[] scriptText = File.ReadAllLines(script);
 
                     // Parse into batches according to GO
-                    var batches = new DBUpdateScriptToBatch().SplitScriptIntoBatches(scriptText);
+                    var batches = new DBUpdateFileScriptToBatch().GetScriptAndSplit(script);
 
                     // For each batch
                     foreach (var batch in batches)
@@ -91,53 +88,52 @@ namespace DBUpdate_Client
 
 
         // TODO: Ici qu'il y a les batchs
-        private IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
-        {
-            DBUpdateScriptToBatch dBUpdateScriptToBatch = new DBUpdateScriptToBatch();
-            return (IEnumerable<IEnumerable<string>>)dBUpdateScriptToBatch;
+        //private IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
+        //{
+        //    //DBUpdateScriptToBatch dBUpdateScriptToBatch = new DBUpdateScriptToBatch();
+        //    //return (IEnumerable<IEnumerable<string>>)dBUpdateScriptToBatch;
 
-            //var result = new List<IEnumerable<string>>();
-            //IList<string> currentBatch = new List<string>();
+        //    var result = new List<IEnumerable<string>>();
+        //    IList<string> currentBatch = new List<string>();
 
-            //bool add = true;
+        //    bool add = true;
 
-            //foreach (string line in scriptText)
-            //{
-            //    bool end = false;
+        //    foreach (string line in scriptText)
+        //    {
+        //        bool end = false;
 
-            //    if (line.StartsWith("/*"))
-            //    {
-            //        add = false;
-            //    }
-            //    if (line.StartsWith("*/"))
-            //    {
-            //        add = true;
-            //        end = true;
-            //    }
+        //        if (line.StartsWith("/*"))
+        //        {
+        //            add = false;
+        //        }
+        //        if (line.StartsWith("*/"))
+        //        {
+        //            add = true;
+        //            end = true;
+        //        }
 
-            //    if (add && !end)
-            //    {
-            //        if (line == "GO")
-            //        {
-            //            result.Add(currentBatch);
-            //            currentBatch = new List<string>();
-            //        }
-            //        else
-            //        {
-            //            if (CheckBatchIsValid(line))
-            //            {
-            //                currentBatch.Add(line);
-            //            }
-            //        }
-            //    }
-            //}
-
-            //if (currentBatch.Count > 0)
-            //{
-            //    result.Add(currentBatch);
-            //}
-            //return result;
-        }
+        //        if (add && !end)
+        //        {
+        //            if (line == "GO")
+        //            {
+        //                result.Add(currentBatch);
+        //                currentBatch = new List<string>();
+        //            }
+        //            else
+        //            {
+        //                if (CheckBatchIsValid(line))
+        //                {
+        //                    currentBatch.Add(line);
+        //                }
+        //            }
+        //    }
+        //}
+        //if (currentBatch.Count > 0)
+        //{
+        //    result.Add(currentBatch);
+        //}
+        //return result;
+        //}
 
         private void ExecuteBatch(IEnumerable<string> batch)
         {

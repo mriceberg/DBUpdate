@@ -6,11 +6,11 @@ namespace DBUpdate_Client
     public class DBUpdateController
     {
         private readonly ConfigurationProvider configurationProvider;
-        private readonly Logger logger;
+        private readonly ILogger logger;
 
         private DBUpdateConfiguration configuration;
 
-        public DBUpdateController(ConfigurationProvider configuration, Logger logger)
+        public DBUpdateController(ConfigurationProvider configuration, ILogger logger)
         {
             this.configurationProvider = configuration;
             this.logger = logger;

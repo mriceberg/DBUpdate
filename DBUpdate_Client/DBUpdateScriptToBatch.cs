@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace DBUpdate_Client
 {
-    public class DBUpdateScriptToBatch
+    public abstract class DBUpdateScriptToBatch
     {
-        public IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
+        public IEnumerable<IEnumerable<string>> GetScriptAndSplit(string script) => SplitScriptIntoBatches(GetScript(script));
+
+        protected abstract IEnumerable<string> GetScript(string script);
+
+        private IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
         {
             var result = new List<IEnumerable<string>>();
             IList<string> currentBatch = new List<string>();
@@ -30,6 +34,7 @@ namespace DBUpdate_Client
             {
                 result.Add(currentBatch);
             }
+
             return result;
         }
     }
