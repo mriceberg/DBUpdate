@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -48,8 +49,8 @@
     <Compile Include="BaseConfigurationProvider.cs" />
     <Compile Include="BaseConnectionProvider.cs" />
     <Compile Include="BaseLogger.cs" />
-    <Compile Include="ConfigurationProvider.cs" />
-    <Compile Include="ConnectionProvider.cs" />
+    <Compile Include="IConfigurationProvider.cs" />
+    <Compile Include="IConnectionProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ConstantConnectionProvider.cs" />
     <Compile Include="DBUpdateCheck.cs" />
@@ -74,9 +75,11 @@
     <Compile Include="DBUpdateScriptToBatch.cs" />
     <Compile Include="DBUpdateStructureValidator.cs" />
     <Compile Include="DefaultConfigurationProvider.cs" />
+    <Compile Include="DefaultLoggerFactory.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="LoggerFactory.cs" />
     <Compile Include="MultiCastLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

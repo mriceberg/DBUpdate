@@ -14,11 +14,13 @@ namespace DBUpdate_Client
         {
             try
             {
-                FileStream objFilestream = new FileStream(string.Format("{0}\\{1}", "C:\\temp\\workingdir", "log.txt"), FileMode.Append, FileAccess.Write);
-                StreamWriter objStreamWriter = new StreamWriter((Stream)objFilestream);
-                objStreamWriter.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm") + " - " + message);
-                objStreamWriter.Close();
-                objFilestream.Close();
+                using (FileStream objFilestream = new FileStream(string.Format("{0}\\{1}", "C:\\temp\\workingdir", "log.txt"), FileMode.Append, FileAccess.Write))
+                {
+                    using (StreamWriter objStreamWriter = new StreamWriter(objFilestream))
+                    {
+                        objStreamWriter.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm") + " - " + message);
+                    }
+                }
 
             }
             catch (Exception ex)

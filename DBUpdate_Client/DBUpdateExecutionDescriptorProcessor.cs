@@ -10,11 +10,11 @@ namespace DBUpdate_Client
     {
         private readonly ILogger logger;
         private readonly DBUpdateExecutionDescriptor executionDescriptor;
-        private readonly ConfigurationProvider configurationProvider;
+        private readonly IConfigurationProvider configurationProvider;
         private readonly DBUpdateConfiguration configuration;
-        private readonly ConnectionProvider connectionProvider;
+        private readonly IConnectionProvider connectionProvider;
 
-        public DBUpdateExecutionDescriptorProcessor(ILogger logger, DBUpdateExecutionDescriptor executionDescriptor, ConfigurationProvider configurationProvider, DBUpdateConfiguration configuration)
+        public DBUpdateExecutionDescriptorProcessor(ILogger logger, DBUpdateExecutionDescriptor executionDescriptor, IConfigurationProvider configurationProvider, DBUpdateConfiguration configuration)
         {
             this.logger = logger;
             this.executionDescriptor = executionDescriptor;
@@ -77,8 +77,8 @@ namespace DBUpdate_Client
             run.Close();
         }
         private void Log(string message) => this.logger?.LogMessage(message);
-        private void CheckDBStructure(ConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
-        private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, ConnectionProvider connectionProvider)
+        private void CheckDBStructure(IConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
+        private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, IConnectionProvider connectionProvider)
         {
             ScriptGateway scriptGateway = new ScriptGateway(connectionProvider);
             var executedBlockNames = scriptGateway.GetExecutedScriptNames().Select(sn => blocksToExecute.FirstOrDefault(bte => bte.Name == sn)).Where(b => b != null);
@@ -150,7 +150,7 @@ namespace DBUpdate_Client
                 }
             }
         }
-        private static void LogScriptExecution(ConnectionProvider connectionProvider, string blockName, string scriptPath, int runId)
+        private static void LogScriptExecution(IConnectionProvider connectionProvider, string blockName, string scriptPath, int runId)
         {
             new ScriptGateway(connectionProvider).RecordExecution(runId, blockName, scriptPath);
         }

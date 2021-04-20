@@ -2,7 +2,7 @@
 
 namespace DBUpdate_Client
 {
-    public abstract class BaseConnectionProvider : ConnectionProvider
+    public abstract class BaseConnectionProvider : IConnectionProvider
     {
         public SqlConnection GetConnection() => DoGetConnection();
 

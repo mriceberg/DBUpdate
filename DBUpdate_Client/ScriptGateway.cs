@@ -5,9 +5,9 @@ namespace DBUpdate_Client
 {
     public class ScriptGateway
     {
-        private readonly ConnectionProvider connectionProvider;
+        private readonly IConnectionProvider connectionProvider;
 
-        public ScriptGateway(ConnectionProvider connectionProvider)
+        public ScriptGateway(IConnectionProvider connectionProvider)
         {
             this.connectionProvider = connectionProvider;
         }

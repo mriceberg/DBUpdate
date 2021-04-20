@@ -22,7 +22,7 @@ namespace DBUpdate_Client
 
         private XmlDocument _document;
 
-        public DBUpdateCheck(ILogger logger, DBUpdateParameters param, ConfigurationProvider configurationProvider)
+        public DBUpdateCheck(ILogger logger, DBUpdateParameters param, IConfigurationProvider configurationProvider)
         {
             _logger = logger;
             _param = param;
@@ -35,8 +35,8 @@ namespace DBUpdate_Client
         {
             if (_param.IsTest)
             {
-                _logger.LogMessage("Starting all the check ...");
-                _logger.LogFile("Starting all the test check ...");
+               // _logger.LogMessage("Starting all the check ...");
+                _logger.LogMessage("Starting all the test check ...");
                 TestIsTest();
             }
         }

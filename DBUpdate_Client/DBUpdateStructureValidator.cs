@@ -4,13 +4,13 @@ namespace DBUpdate_Client
 {
     public class DBUpdateStructureValidator
     {
-        private readonly ConnectionProvider connectionProvider;
+        private readonly IConnectionProvider connectionProvider;
 
         public const string SCHEMA_NAME = "dbupdate";
         public const string RUN_TABLE_NAME = "Run";
         public const string SCRIPT_TABLE_NAME = "Script";
 
-        public DBUpdateStructureValidator(ConnectionProvider connectionProvider)
+        public DBUpdateStructureValidator(IConnectionProvider connectionProvider)
         {
             this.connectionProvider = connectionProvider; ;
         }

@@ -1,9 +1,9 @@
 ﻿namespace DBUpdate_Client
 {
-    public class DefaultUtilFactory : UtilFactory
+    public class DefaultUtilFactory : IUtilFactory
     {
-        public ConfigurationProvider MakeConfigurationProvider() => new DefaultConfigurationProvider();
-        public ILogger MakeLogger() => new MultiCastLogger();
+        public IConfigurationProvider MakeConfigurationProvider() => new DefaultConfigurationProvider();
+        public ILoggerFactory MakeLoggerFactory() => new DefaultLoggerFactory();
 
     }
 }

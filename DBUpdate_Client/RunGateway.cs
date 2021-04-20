@@ -4,9 +4,9 @@ namespace DBUpdate_Client
 {
     public class RunGateway
     {
-        private readonly ConnectionProvider connectionProvider;
+        private readonly IConnectionProvider connectionProvider;
 
-        public RunGateway(ConnectionProvider connectionProvider)
+        public RunGateway(IConnectionProvider connectionProvider)
         {
             this.connectionProvider = connectionProvider;
         }

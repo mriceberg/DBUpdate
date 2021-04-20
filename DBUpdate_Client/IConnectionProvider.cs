@@ -2,7 +2,7 @@
 
 namespace DBUpdate_Client
 {
-    public interface ConnectionProvider
+    public interface IConnectionProvider
     {
         SqlConnection GetConnection();
     }

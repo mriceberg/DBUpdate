@@ -1,8 +1,8 @@
 ﻿namespace DBUpdate_Client
 {
-    public interface UtilFactory
+    public interface IUtilFactory
     {
-        ConfigurationProvider MakeConfigurationProvider();
-        ILogger MakeLogger();
+        IConfigurationProvider MakeConfigurationProvider();
+        ILoggerFactory MakeLoggerFactory();
     }
 }

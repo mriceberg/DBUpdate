@@ -5,13 +5,16 @@ namespace DBUpdate_Client
     class Program
     {
         private static DBUpdateParameters _parameters;
+        private static DBUpdateConfiguration _config;
         static void Main(string[] args)
         {
-            UtilFactory utils = new DefaultUtilFactory();
-            ILogger logger = utils.MakeLogger();
-            ConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
+            IUtilFactory utils = new DefaultUtilFactory();
+            ILoggerFactory loggerFactory = utils.MakeLoggerFactory();
+            IConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
 
+            _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
+            ILogger logger = loggerFactory.MakeMultiCastLogger(logToConsole: _config.ConsoleLogger, logToFile: _config.FileLogger);
             logger.LogMessage("Starting project");
 
             if (_parameters.IsTest) 

@@ -4,6 +4,8 @@
     {
         private string workingDirectory;
         private string xsdName;
+        private bool fileLogger;
+        private bool consoleLogger;
 
         public DBUpdateConfigurationBuilder()
         {
@@ -14,7 +16,8 @@
         {
             this.workingDirectory = null;
             this.xsdName = null;
-
+            this.fileLogger = false;
+            this.consoleLogger = false;
             return this;
         }
         public DBUpdateConfigurationBuilder SetXsdName(string value)
@@ -29,7 +32,19 @@
 
             return this;
         }
+        public DBUpdateConfigurationBuilder SetFileLogger(bool value)
+        {
+            this.fileLogger = value;
 
-        public DBUpdateConfiguration Build() => new DBUpdateConfiguration(workingDirectory, xsdName);
+            return this;
+        }
+        public DBUpdateConfigurationBuilder SetConsoleLogger(bool value)
+        {
+            this.consoleLogger = value;
+
+            return this;
+        }
+
+        public DBUpdateConfiguration Build() => new DBUpdateConfiguration(workingDirectory, xsdName, fileLogger, consoleLogger);
     }
 }
