@@ -11,10 +11,15 @@ namespace DBUpdate_Client
             IUtilFactory utils = new DefaultUtilFactory();
             ILoggerFactory loggerFactory = utils.MakeLoggerFactory();
             IConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
-
+            ILogger logger;
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
-            ILogger logger = loggerFactory.MakeMultiCastLogger(logToConsole: _config.ConsoleLogger, logToFile: _config.FileLogger);
+
+            if (_parameters.IsSilent)
+                logger = loggerFactory.MakeMultiCastLogger(logToConsole: _config.ConsoleLogger, logToFile: _config.FileLogger);
+            else
+                logger = loggerFactory.MakeMultiCastLogger(logToConsole: false, logToFile: false);
+
             logger.LogMessage("Starting project");
 
             if (_parameters.IsTest) 
@@ -22,7 +27,7 @@ namespace DBUpdate_Client
                 //Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters
                 DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider);
                 check.StartTest();
-            } 
+            }
             else 
             {
                 DBUpdateController controller = new DBUpdateController(configurationProvider, logger);

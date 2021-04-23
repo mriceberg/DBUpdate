@@ -9,6 +9,7 @@ namespace DBUpdate_Client
     public class DBUpdateParametersBuilder
     {
         private bool isTest;
+        private bool isSilent;
 
         public DBUpdateParametersBuilder()
         {
@@ -17,6 +18,7 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder Reset()
         {
             this.isTest = false;
+            this.isSilent = false;
             return this;
         }
         public DBUpdateParametersBuilder SetIsTest(bool value)
@@ -24,9 +26,15 @@ namespace DBUpdate_Client
             this.isTest = value;
             return this;
         }
+        public DBUpdateParametersBuilder SetIsSilent(bool value)
+        {
+            this.isSilent = value;
+            return this;
+        }
+       
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest);
+            return new DBUpdateParameters(isTest, isSilent);
         }
 
     }
