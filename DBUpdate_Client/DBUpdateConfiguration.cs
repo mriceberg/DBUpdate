@@ -4,7 +4,6 @@
     {
         public string WorkingDirectory { get; private set; }
         public string XsdName { get; private set; }
-
         public bool FileLogger { get; private set; }
         public bool ConsoleLogger { get; private set; }
 

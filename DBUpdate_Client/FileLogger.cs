@@ -28,14 +28,5 @@ namespace DBUpdate_Client
                 Console.WriteLine(ex.Message);
             }
         }
-
-        //protected override void DoLogInFileMessage(string message)
-        //{
-            
-        //}
-        //protected override void DoLogMessage(string message)
-        //{
-            
-        //}
     }
 }

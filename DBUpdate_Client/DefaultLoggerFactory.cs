@@ -11,7 +11,7 @@ namespace DBUpdate_Client
 
         public ILogger MakeMultiCastLogger(params ILogger[] loggers) => new MultiCastLogger(loggers);
 
-        public ILogger MakeMultiCastLogger(bool logToConsole = true, bool logToFile = false)
+        public ILogger MakeMultiCastLogger(bool logToConsole, bool logToFile)
         {
             IList<ILogger> loggers = new List<ILogger>();
 

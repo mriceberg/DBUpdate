@@ -19,7 +19,6 @@ namespace DBUpdate_Client
         private readonly ILogger _logger;
         private readonly DBUpdateParameters _param;
         private readonly DBUpdateConfiguration _config;
-
         private XmlDocument _document;
 
         public DBUpdateCheck(ILogger logger, DBUpdateParameters param, IConfigurationProvider configurationProvider)
@@ -160,7 +159,6 @@ namespace DBUpdate_Client
                 Log("Error: There is a GO in the last line of the file");
             }
         }
-        //private bool CheckBatchIsValid(string line) => !String.IsNullOrWhiteSpace(line);
         private void Log(string message) => this._logger?.LogMessage(message);
     }
 }
