@@ -27,6 +27,7 @@ namespace DBUpdate_Client
             {
                 DBUpdateController controller = new DBUpdateController(configurationProvider, logger);
                 controller.Execute();
+                Console.WriteLine("Hit enter to stop the program");
                 Console.ReadLine();
             }
             logger.LogMessage("Fin de l'exécution");
