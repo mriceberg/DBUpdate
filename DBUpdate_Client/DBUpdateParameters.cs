@@ -10,11 +10,13 @@ namespace DBUpdate_Client
     {
         public bool IsTest { get; private set; }
         public bool IsSilent { get; private set; }
+        public bool IsSimulation { get; private set; }
 
-        public DBUpdateParameters(bool isTest, bool isSilent)
+        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation)
         {
             IsTest = isTest;
             IsSilent = isSilent;
+            IsSimulation = isSimulation;
         }
     }
 }

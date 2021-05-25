@@ -7,8 +7,10 @@ namespace DBUpdate_Client
     {
         private string path;
         private string connectionStringName;
+        private string name;
         private IList<DBUpdateExecutionBlockDescriptor> blocks;
         private IList<DBUpdateExecutionBlockDescriptor> blocksToExecute;
+        
 
         public DBUpdateExecutionDescriptorBuilder()
         {
@@ -19,6 +21,7 @@ namespace DBUpdate_Client
         {
             this.path = null;
             this.connectionStringName = null;
+            this.name = null;
             this.blocks = new List<DBUpdateExecutionBlockDescriptor>();
             this.blocksToExecute = new List<DBUpdateExecutionBlockDescriptor>();
 
@@ -37,6 +40,12 @@ namespace DBUpdate_Client
 
             return this;
         }
+        public DBUpdateExecutionDescriptorBuilder SetName(string value)
+        {
+            this.name = value;
+
+            return this;
+        }
         public DBUpdateExecutionDescriptorBuilder AddBlock(DBUpdateExecutionBlockDescriptor value)
         {
             blocks.Add(value);
@@ -52,6 +61,6 @@ namespace DBUpdate_Client
         public DBUpdateExecutionDescriptorBuilder AddBlockToExecute(string blockName) => AddBlockToExecute(blocks.Single(b => b.Name == blockName));
 
         public DBUpdateExecutionDescriptor Build()
-            => new DBUpdateExecutionDescriptor(path, connectionStringName, blocks, blocksToExecute);
+            => new DBUpdateExecutionDescriptor(path, connectionStringName, blocks, blocksToExecute, name);
     }
 }

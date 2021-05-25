@@ -10,8 +10,6 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 
 
-// TODO: Remplacer Console.WriteLine par _logger.LogMessage
-
 namespace DBUpdate_Client
 {
     public class DBUpdateCheck
@@ -19,13 +17,18 @@ namespace DBUpdate_Client
         private readonly ILogger _logger;
         private readonly DBUpdateParameters _param;
         private readonly DBUpdateConfiguration _config;
+        private readonly IConnectionProvider _connectionProvider;
+        private readonly DBUpdateExecutionDescriptor _executionDescriptor;
         private XmlDocument _document;
 
-        public DBUpdateCheck(ILogger logger, DBUpdateParameters param, IConfigurationProvider configurationProvider)
+        public DBUpdateCheck(ILogger logger, DBUpdateParameters param, IConfigurationProvider configurationProvider, DBUpdateExecutionDescriptor executionDescriptor)
         {
             _logger = logger;
             _param = param;
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
+            _executionDescriptor = executionDescriptor;
+
+            _connectionProvider = new ConstantConnectionProvider(configurationProvider.GetConnectionString(_executionDescriptor.ConnectionStringName));
 
             if (_logger == null) throw new ArgumentNullException(nameof(logger));
         }
@@ -34,8 +37,8 @@ namespace DBUpdate_Client
         {
             if (_param.IsTest)
             {
-               // _logger.LogMessage("Starting all the check ...");
-                _logger.LogMessage("Starting all the test check ...");
+                // _logger.LogMessage("Starting all the check ...");
+                Log("Starting all the test check ...");
                 TestIsTest();
             }
         }
@@ -47,6 +50,11 @@ namespace DBUpdate_Client
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
                 CheckBatchGoCommentedInMultiLineComment(file);
+            }
+
+            if (_param.IsSimulation)
+            {
+                StatsWithSimulationMode(_connectionProvider);
             }
         }
 
@@ -86,14 +94,13 @@ namespace DBUpdate_Client
         private void ValidationCallBack(object sender, ValidationEventArgs args)
         {
             if (args.Severity == XmlSeverityType.Warning)
-                Console.WriteLine("\tWarning: Matching schema not found.  No validation occurred." + args.Message);
+                Log("\tWarning: Matching schema not found.  No validation occurred." + args.Message);
             else
-                Console.WriteLine("\tValidation error: " + args.Message);
+                Log("\tValidation error: " + args.Message);
 
         }
         private void CheckSqlRefInBlock(string filePath)
         {
-            // TODO: Vérifier que les BlocksToExecute existent bien dans les Blocks
             DBUpdateExecutionDescriptorReader dBUpdateExecutionDescriptorReader = new DBUpdateExecutionDescriptorReader();
             var descriptor = dBUpdateExecutionDescriptorReader.Read(filePath);
 
@@ -104,6 +111,7 @@ namespace DBUpdate_Client
 
                 // For each script to execute
                 foreach (var script in block.Scripts)
+                //foreach (var script in descriptor.Blocks.ToList(aa))
                 {
                     Log($"Checking script {script.Name}");
                     // Check that the script is available
@@ -116,7 +124,6 @@ namespace DBUpdate_Client
             }
         }
 
-        // TODO: Pendant l'exécution des scripts SQL, ils sont divisés en lots "batches", séparés par des lignes contenant le mot GO et rien d'autre. Lorsque cette ligne se trouve dans un commentaire de plusieurs lignes, elle doit être ignorée.
         private void CheckBatchGoCommentedInMultiLineComment(string file)
         {
             var batches = new DBUpdateFileScriptToBatch().GetScriptAndSplit(file);
@@ -127,7 +134,6 @@ namespace DBUpdate_Client
 
                 foreach (string line in batch)
                 {
-
                     if (line.StartsWith("/*"))
                     {
                         comment++;
@@ -151,7 +157,6 @@ namespace DBUpdate_Client
             CheckBatchGoInLastLine(batches);
         }
 
-        // TODO: When GO is the last line of the file, execution crashes.
         private void CheckBatchGoInLastLine(IEnumerable<IEnumerable<string>> batches)
         {
             if (batches.Last().Last().StartsWith("GO") || batches.Last().ElementAt(batches.Count() - 1).StartsWith("GO"))
@@ -159,6 +164,38 @@ namespace DBUpdate_Client
                 Log("Error: There is a GO in the last line of the file");
             }
         }
+        private void StatsWithSimulationMode(IConnectionProvider connectionProvider)
+        {
+            
+            IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this._config.WorkingDirectory));
+
+            //Log("Name of the file : " + file);DBUpdateExecutionDescriptor
+            ScriptGateway scriptGateway = new ScriptGateway(connectionProvider);
+
+            //return blocksToExecute.Except(executedBlockNames).ToArray();
+            var nbrOfBlock = 0;
+            foreach (DBUpdateExecutionDescriptor descriptor in executionDescriptors)
+            {
+                var executedBlockNames = scriptGateway.GetExecutedScriptNames().Select(sn => descriptor.BlocksToExecute.FirstOrDefault(bte => bte.Name == sn)).Where(b => b != null);
+                nbrOfBlock += descriptor.BlocksToExecute.Except(executedBlockNames).Count();
+
+                Log($"There are {nbrOfBlock} blocks to execute in the file {descriptor.Name}");
+            }
+
+            DBUpdateExecutionBlockDescriptor dBUpdateExecutionBlockDescriptorBuilder = new DBUpdateExecutionBlockDescriptorBuilder().Build();
+            IEnumerable<DBUpdateScript> scripts = dBUpdateExecutionBlockDescriptorBuilder.Scripts;
+
+            int nbrOfScripts = 0;
+            foreach (DBUpdateScript script in scripts)
+            {
+                nbrOfScripts++;
+            }
+            Log("There are " + nbrOfScripts + " scripts");
+        }
+
+
+
+
         private void Log(string message) => this._logger?.LogMessage(message);
     }
 }

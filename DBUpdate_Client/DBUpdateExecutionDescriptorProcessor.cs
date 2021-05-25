@@ -86,55 +86,6 @@ namespace DBUpdate_Client
             return blocksToExecute.Except(executedBlockNames).ToArray();
         }
 
-
-        // TODO: Ici qu'il y a les batchs
-        //private IEnumerable<IEnumerable<string>> SplitScriptIntoBatches(IEnumerable<string> scriptText)
-        //{
-        //    //DBUpdateScriptToBatch dBUpdateScriptToBatch = new DBUpdateScriptToBatch();
-        //    //return (IEnumerable<IEnumerable<string>>)dBUpdateScriptToBatch;
-
-        //    var result = new List<IEnumerable<string>>();
-        //    IList<string> currentBatch = new List<string>();
-
-        //    bool add = true;
-
-        //    foreach (string line in scriptText)
-        //    {
-        //        bool end = false;
-
-        //        if (line.StartsWith("/*"))
-        //        {
-        //            add = false;
-        //        }
-        //        if (line.StartsWith("*/"))
-        //        {
-        //            add = true;
-        //            end = true;
-        //        }
-
-        //        if (add && !end)
-        //        {
-        //            if (line == "GO")
-        //            {
-        //                result.Add(currentBatch);
-        //                currentBatch = new List<string>();
-        //            }
-        //            else
-        //            {
-        //                if (CheckBatchIsValid(line))
-        //                {
-        //                    currentBatch.Add(line);
-        //                }
-        //            }
-        //    }
-        //}
-        //if (currentBatch.Count > 0)
-        //{
-        //    result.Add(currentBatch);
-        //}
-        //return result;
-        //}
-
         private void ExecuteBatch(IEnumerable<string> batch)
         {
             using (var connection = connectionProvider.GetConnection())

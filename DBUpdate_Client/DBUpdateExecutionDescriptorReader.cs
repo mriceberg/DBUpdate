@@ -14,10 +14,12 @@ namespace DBUpdate_Client
             string fileFolder = Path.GetDirectoryName(filePath);
             XDocument descriptor = XDocument.Load(filePath);
             string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
-            
+
             DBUpdateExecutionDescriptorBuilder builder = new DBUpdateExecutionDescriptorBuilder()
                 .SetPath(filePath)
-                .SetConnectionStringName(connectionStringName);
+                .SetConnectionStringName(connectionStringName)
+                .SetName(Path.GetFileName(fileFolder));
+                //Slipt le fileFolder en 2 pour récuperer le nom du fichier en uti8lisant le pathgetfilename
 
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
             DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();

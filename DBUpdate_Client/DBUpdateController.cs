@@ -7,13 +7,13 @@ namespace DBUpdate_Client
     {
         private readonly IConfigurationProvider configurationProvider;
         private readonly ILogger logger;
-
         private DBUpdateConfiguration configuration;
-
-        public DBUpdateController(IConfigurationProvider configuration, ILogger logger)
+        private DBUpdateParameters parameters;
+        public DBUpdateController(IConfigurationProvider configuration, ILogger logger, DBUpdateParameters parameters)
         {
             this.configurationProvider = configuration;
             this.logger = logger;
+            this.parameters = parameters;
         }
         public void Execute()
         {
@@ -22,13 +22,37 @@ namespace DBUpdate_Client
 
             // Get list of files to process
             var executionDescriptors = ReadExecutionDescriptors();
-            ProcessExecutionDescriptors(executionDescriptors);
+            if (!parameters.IsSimulation) { 
+                ProcessExecutionDescriptors(executionDescriptors);
+            }
+            else
+            {
+                // TODO: There should be a simulation mode that would indicate how many blocks, how many scripts, and how many batches would be executed for each xml file.
+                
+                //IEnumerable<DBUpdateExecutionDescriptor> blocks = executionDescriptors;
+                //int nbrOFBlocks = 0;
+                //foreach ( DBUpdateExecutionDescriptor block in blocks)
+                //{
+                //    nbrOFBlocks++;
+                //}
+                //Log("There are " + nbrOFBlocks + " blocks");
+
+                //DBUpdateExecutionBlockDescriptor dBUpdateExecutionBlockDescriptorBuilder = new DBUpdateExecutionBlockDescriptorBuilder().Build();
+                //IEnumerable<DBUpdateScript> scripts = dBUpdateExecutionBlockDescriptorBuilder.Scripts;
+
+                //int nbrOfScripts = 0;
+                //foreach (DBUpdateScript script in scripts)
+                //{
+                //    nbrOfScripts++;
+                //}
+                //Log("There are " + nbrOfScripts + " scripts");
+
+            }
         }
 
         private DBUpdateConfiguration ReadConfiguration() => new DBUpdateConfigurationReader(this.configurationProvider).Read();
         private IEnumerable<DBUpdateExecutionDescriptor> ReadExecutionDescriptors() => 
-            new DBUpdateExecutionDescriptorReader()
-            .ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this.configuration.WorkingDirectory));
+            new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this.configuration.WorkingDirectory));
 
         private void ProcessExecutionDescriptors(IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors)
         {
