@@ -19,8 +19,7 @@ namespace DBUpdate_Client
                 .SetPath(filePath)
                 .SetConnectionStringName(connectionStringName)
                 .SetName(Path.GetFileName(fileFolder));
-                //Slipt le fileFolder en 2 pour récuperer le nom du fichier en uti8lisant le pathgetfilename
-
+                
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
             DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
             foreach (var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))

@@ -16,7 +16,7 @@ namespace DBUpdate_Client
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
-            DBUpdateExecutionDescriptor executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory));
+            IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory));
 
             if (_parameters.IsSilent)
                 logger = loggerFactory.MakeMultiCastLogger(logToConsole: false, logToFile: false);
@@ -28,7 +28,7 @@ namespace DBUpdate_Client
             if (_parameters.IsTest) 
             {
                 // TODO : Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters
-                DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, executionDescriptors);
+                DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, (DBUpdateExecutionDescriptor)executionDescriptors);
                 check.StartTest();
             }
             else
