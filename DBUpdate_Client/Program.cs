@@ -16,7 +16,8 @@ namespace DBUpdate_Client
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
-            IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory));
+            //DBUpdateExecutionDescriptor executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory));
+            DBUpdateExecutionDescriptor executionDescriptor = new DBUpdateExecutionDescriptorReader().Read("C:/temp/workingdir/ScriptsEtt.xml");
 
             if (_parameters.IsSilent)
                 logger = loggerFactory.MakeMultiCastLogger(logToConsole: false, logToFile: false);
@@ -28,7 +29,7 @@ namespace DBUpdate_Client
             if (_parameters.IsTest) 
             {
                 // TODO : Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters
-                DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, (DBUpdateExecutionDescriptor)executionDescriptors);
+                DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, executionDescriptor);
                 check.StartTest();
             }
             else

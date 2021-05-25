@@ -37,7 +37,6 @@ namespace DBUpdate_Client
         {
             if (_param.IsTest)
             {
-                // _logger.LogMessage("Starting all the check ...");
                 Log("Starting all the test check ...");
                 TestIsTest();
             }
@@ -167,22 +166,24 @@ namespace DBUpdate_Client
         private void StatsWithSimulationMode(IConnectionProvider connectionProvider)
         {
             
-            IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this._config.WorkingDirectory));
+            IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader()
+                .ReadAll(new DBUpdateExecutionDescriptorProvider()
+                .GetFilesToRead(this._config.WorkingDirectory));
 
-            //Log("Name of the file : " + file);DBUpdateExecutionDescriptor
             ScriptGateway scriptGateway = new ScriptGateway(connectionProvider);
 
-            //return blocksToExecute.Except(executedBlockNames).ToArray();
             var nbrOfBlock = 0;
             foreach (DBUpdateExecutionDescriptor descriptor in executionDescriptors)
             {
                 var executedBlockNames = scriptGateway.GetExecutedScriptNames().Select(sn => descriptor.BlocksToExecute.FirstOrDefault(bte => bte.Name == sn)).Where(b => b != null);
                 nbrOfBlock += descriptor.BlocksToExecute.Except(executedBlockNames).Count();
 
-                Log($"There are {nbrOfBlock} blocks to execute in the file {descriptor.Name}");
+                Log($"There are {nbrOfBlock} blocks to execute in the folder {descriptor.Name}");
             }
 
             DBUpdateExecutionBlockDescriptor dBUpdateExecutionBlockDescriptorBuilder = new DBUpdateExecutionBlockDescriptorBuilder().Build();
+
+
             IEnumerable<DBUpdateScript> scripts = dBUpdateExecutionBlockDescriptorBuilder.Scripts;
 
             int nbrOfScripts = 0;
@@ -190,7 +191,7 @@ namespace DBUpdate_Client
             {
                 nbrOfScripts++;
             }
-            Log("There are " + nbrOfScripts + " scripts");
+            Log("There are " + nbrOfScripts + " scripts in " + dBUpdateExecutionBlockDescriptorBuilder );
         }
 
 

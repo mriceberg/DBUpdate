@@ -22,7 +22,7 @@ namespace DBUpdate_Client
             .Build();
 
         protected bool ReadIsSimulation() =>
-            this.args.Contains("--simulation") || this.args.Contains("-sim") || this.args.Contains("--SIMULATION") || this.args.Contains("-SIM");
+            this.args.Contains("--simulation") || this.args.Contains("--sim") || this.args.Contains("--SIMULATION") || this.args.Contains("--SIM");
         protected bool ReadIsTest() =>
             this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("--TEST") || this.args.Contains("-T");
         protected bool ReadIsSilent() =>
