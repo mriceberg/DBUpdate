@@ -42,7 +42,7 @@ namespace DBUpdate_Client
                 }
             }
 
-            logger.LogMessage("Fin de l'exécution");
+            logger.LogMessage("Fin de l'exécution \n");
 
         }
     }

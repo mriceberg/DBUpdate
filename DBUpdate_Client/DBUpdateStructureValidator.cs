@@ -51,7 +51,7 @@ namespace DBUpdate_Client
         private void CreateRunTable()
             => CreateTable(SCHEMA_NAME, RUN_TABLE_NAME, "Id INT IDENTITY(1, 1) PRIMARY KEY, StartDate DATETIME NOT NULL DEFAULT GETDATE(), EndDate DATETIME NULL");
         private void CreateScriptTable()
-            => CreateTable(SCHEMA_NAME, SCRIPT_TABLE_NAME, "CREATE TABLE dbupdate.Script (Id INT IDENTITY(1, 1) PRIMARY KEY, RunId INT NOT NULL FOREIGN KEY REFERENCES dbupdate.Run(Id), BlockName VARCHAR(200) NOT NULL, ScriptName VARCHAR(200) NOT NULL, ExecutionDate DATETIME NOT NULL DEFAULT GETDATE()");
+            => CreateTable(SCHEMA_NAME, SCRIPT_TABLE_NAME, "Id INT IDENTITY(1, 1) PRIMARY KEY, RunId INT NOT NULL FOREIGN KEY REFERENCES dbupdate.Run(Id), BlockName VARCHAR(200) NOT NULL, ScriptName VARCHAR(200) NOT NULL, ExecutionDate DATETIME NOT NULL DEFAULT GETDATE()");
         private bool SchemaExists(string schemaName)
             => Exists(@"SELECT 1 FROM sys.schemas s WHERE s.name = @SchemaName;", new SqlParameter[] { new SqlParameter("@SchemaName", schemaName) });
 

@@ -38,6 +38,9 @@ namespace DBUpdate_Client
             if (_param.IsTest)
             {
                 Log("Starting all the test check ...");
+
+                //Vérifie les tables et les recrées si elles ont été drop
+                CheckDBStructure(_connectionProvider);
                 TestIsTest();
             }
         }
@@ -49,12 +52,14 @@ namespace DBUpdate_Client
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
                 CheckBatchGoCommentedInMultiLineComment(file);
+
+                if (_param.IsSimulation)
+                {
+                    StatsWithSimulationMode(_connectionProvider, file);
+                }
             }
 
-            if (_param.IsSimulation)
-            {
-                StatsWithSimulationMode(_connectionProvider);
-            }
+           
         }
 
         private void CheckXML(string filePath)
@@ -163,7 +168,7 @@ namespace DBUpdate_Client
                 Log("Error: There is a GO in the last line of the file");
             }
         }
-        private void StatsWithSimulationMode(IConnectionProvider connectionProvider)
+        private void StatsWithSimulationMode(IConnectionProvider connectionProvider,string file)
         {
             
             IEnumerable<DBUpdateExecutionDescriptor> executionDescriptors = new DBUpdateExecutionDescriptorReader()
@@ -173,30 +178,33 @@ namespace DBUpdate_Client
             ScriptGateway scriptGateway = new ScriptGateway(connectionProvider);
 
             var nbrOfBlock = 0;
+            var nbrOfScriptsByBlock = 0;
+            int nbrOfBatch = 0;
             foreach (DBUpdateExecutionDescriptor descriptor in executionDescriptors)
             {
+                var batches = new DBUpdateFileScriptToBatch().GetScriptAndSplit(file);
                 var executedBlockNames = scriptGateway.GetExecutedScriptNames().Select(sn => descriptor.BlocksToExecute.FirstOrDefault(bte => bte.Name == sn)).Where(b => b != null);
+                
                 nbrOfBlock += descriptor.BlocksToExecute.Except(executedBlockNames).Count();
+                Log($"There are {nbrOfBlock} blocks to execute");
 
-                Log($"There are {nbrOfBlock} blocks to execute in the folder {descriptor.Name}");
+                foreach (var block in descriptor.Blocks) 
+                {
+                    nbrOfScriptsByBlock += block.Scripts.Count();
+                    Log($"There are {nbrOfScriptsByBlock} scripts in block {block.Name}");
+
+                    foreach (IEnumerable<String> batch in batches)
+                    {
+                        nbrOfBatch++;
+                    }
+
+                    Log($"There are {nbrOfBatch} batch in scripts\n");
+
+                }             
             }
-
-            DBUpdateExecutionBlockDescriptor dBUpdateExecutionBlockDescriptorBuilder = new DBUpdateExecutionBlockDescriptorBuilder().Build();
-
-
-            IEnumerable<DBUpdateScript> scripts = dBUpdateExecutionBlockDescriptorBuilder.Scripts;
-
-            int nbrOfScripts = 0;
-            foreach (DBUpdateScript script in scripts)
-            {
-                nbrOfScripts++;
-            }
-            Log("There are " + nbrOfScripts + " scripts in " + dBUpdateExecutionBlockDescriptorBuilder );
         }
 
-
-
-
+        private void CheckDBStructure(IConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
         private void Log(string message) => this._logger?.LogMessage(message);
     }
 }
