@@ -31,8 +31,8 @@ namespace DBUpdate_Client
         }
 
         private string ReadXsdName() => this.configurationProvider.GetAppSetting(XSD_NAME_APPSETTING_NAME);
-        public string ReadWorkingDirectory() => this.configurationProvider.GetAppSetting(WORKING_DIRECTORY_APPSETTING_NAME);
-        public bool ReadFileLogger() => bool.Parse(this.configurationProvider.GetAppSetting(FILE_LOGGER));
-        public bool ReadConsoleLogger() => bool.Parse(this.configurationProvider.GetAppSetting(CONSOLE_LOGGER));
+        private string ReadWorkingDirectory() => this.configurationProvider.GetAppSetting(WORKING_DIRECTORY_APPSETTING_NAME);
+        private bool ReadFileLogger() => bool.Parse(this.configurationProvider.GetAppSetting(FILE_LOGGER));
+        private bool ReadConsoleLogger() => bool.Parse(this.configurationProvider.GetAppSetting(CONSOLE_LOGGER));
     }
 }

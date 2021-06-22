@@ -12,13 +12,12 @@ namespace DBUpdate_Client
         [InlineData(true,false,true,false)]
         public void Reset(bool isTest, bool isSilent, bool isSimulation, bool expected)
         {
-
             // Arrage
           
             // Act
             
             // Assert
-         
+
         }
     }
 }

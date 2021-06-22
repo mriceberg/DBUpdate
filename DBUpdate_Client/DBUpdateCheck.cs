@@ -93,7 +93,6 @@ namespace DBUpdate_Client
                 Log("Your XML was probably bad..." + "Exception :" + exception);
             }
         }
-
         // Display any warnings or errors.
         private void ValidationCallBack(object sender, ValidationEventArgs args)
         {
@@ -199,7 +198,6 @@ namespace DBUpdate_Client
                     }
 
                     Log($"There are {nbrOfBatch} batch in scripts\n");
-
                 }             
             }
         }
