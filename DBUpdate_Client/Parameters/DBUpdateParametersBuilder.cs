@@ -11,6 +11,7 @@ namespace DBUpdate_Client
         private bool isTest;
         private bool isSilent;
         private bool isSimulation;
+        private bool isAppend;
 
         public DBUpdateParametersBuilder()
         {
@@ -21,6 +22,7 @@ namespace DBUpdate_Client
             this.isTest = false;
             this.isSilent = false;
             this.isSimulation = false;
+            this.isAppend = false;
             return this;
         }
         public DBUpdateParametersBuilder SetIsTest(bool value)
@@ -38,9 +40,14 @@ namespace DBUpdate_Client
             this.isSimulation = value;
             return this;
         }
+        public DBUpdateParametersBuilder SetIsAppend(bool value)
+        {
+            this.isAppend = value;
+            return this;
+        }
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, isSilent, isSimulation);
+            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend);
         }
 
     }

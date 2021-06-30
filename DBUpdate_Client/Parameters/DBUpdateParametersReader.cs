@@ -19,6 +19,7 @@ namespace DBUpdate_Client
             .SetIsTest(ReadIsTest())
             .SetIsSilent(ReadIsSilent())
             .SetIsSimulation(ReadIsSimulation())
+            .SetIsAppend(ReadIsAppend())
             .Build();
 
         protected bool ReadIsSimulation() =>
@@ -27,5 +28,7 @@ namespace DBUpdate_Client
             this.args.Contains("--test") || this.args.Contains("-t") || this.args.Contains("--TEST") || this.args.Contains("-T");
         protected bool ReadIsSilent() =>
             this.args.Contains("--silent") || this.args.Contains("-s") || this.args.Contains("--SILENT") || this.args.Contains("-S");
+        protected bool ReadIsAppend() =>
+           this.args.Contains("--append") || this.args.Contains("-a") || this.args.Contains("--APPEND") || this.args.Contains("-A");
     }
 }

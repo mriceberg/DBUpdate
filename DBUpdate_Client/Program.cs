@@ -33,7 +33,15 @@ namespace DBUpdate_Client
             {
                 if (_config.FileLogger)
                 {
-                    myLogFile = File.CreateText(@"C:\temp\workingdir\log.txt");
+                    if (_parameters.IsAppend)
+                    {
+                        myLogFile = File.AppendText(@"C:\temp\workingdir\log.txt");
+                    }
+                    else
+                    {
+                        myLogFile = File.CreateText(@"C:\temp\workingdir\log.txt");
+                    }
+
                     logger = logFactory.MakeFileLogger(myLogFile);
                 }
 
