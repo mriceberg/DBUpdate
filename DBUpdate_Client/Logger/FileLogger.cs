@@ -21,7 +21,6 @@ namespace DBUpdate_Client
                         objStreamWriter.WriteLine(DateTime.Now.ToString("MM/dd/yyyy HH:mm") + " - " + message);
                     }
                 }
-
             }
             catch (Exception ex)
             {

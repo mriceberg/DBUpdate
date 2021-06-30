@@ -1,10 +1,11 @@
-﻿namespace DBUpdate_Client
+﻿using System.IO;
+
+namespace DBUpdate_Client
 {
     public interface ILoggerFactory
     {
         ILogger MakeConsoleLogger();
-        ILogger MakeFileLogger();
+        ILogger MakeFileLogger(StreamWriter file);
         ILogger MakeMultiCastLogger(params ILogger[] loggers);
-        ILogger MakeMultiCastLogger(bool logToConsole, bool logToFile);
     }
 }

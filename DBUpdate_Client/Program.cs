@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DBUpdate_Client
 {
@@ -12,37 +13,59 @@ namespace DBUpdate_Client
             IUtilFactory utils = new DefaultUtilFactory();
             ILoggerFactory loggerFactory = utils.MakeLoggerFactory();
             IConfigurationProvider configurationProvider = utils.MakeConfigurationProvider();
-            ILogger logger;
+            ILogger logger = null;
+
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
-            //DBUpdateExecutionDescriptor executionDescriptors = new DBUpdateExecutionDescriptorReader().ReadAll(new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory));
             DBUpdateExecutionDescriptor executionDescriptor = new DBUpdateExecutionDescriptorReader().Read("C:/temp/workingdir/ScriptsEtt.xml");
+            StreamWriter myLogFile = null;
 
-            if (_parameters.IsSilent)
-                logger = loggerFactory.MakeMultiCastLogger(logToConsole: false, logToFile: false);
-            else
-                logger = loggerFactory.MakeMultiCastLogger(logToConsole: _config.ConsoleLogger, logToFile: _config.FileLogger);
+            DefaultLoggerFactory logFactory = new DefaultLoggerFactory();
+            ILogger consoleLog = null;
 
-            logger.LogMessage("Starting project");
-
-            if (_parameters.IsTest) 
+            if (!_parameters.IsSilent)
             {
-                // TODO : Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters
-                DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, executionDescriptor);
-                check.StartTest();
+              consoleLog = _config.ConsoleLogger ? logFactory.MakeConsoleLogger() : null;
             }
-            else
+
+            try
             {
-                DBUpdateController controller = new DBUpdateController(configurationProvider, logger, _parameters);
-                controller.Execute();
-                if (!_parameters.IsSilent) { 
-                    Console.WriteLine("Hit enter to stop the program");
-                    Console.ReadLine();
+                if (_config.FileLogger)
+                {
+                    myLogFile = File.CreateText(@"C:\temp\workingdir\log.txt");
+                    logger = logFactory.MakeFileLogger(myLogFile);
                 }
-            }
 
-            logger.LogMessage("Fin de l'exécution \n");
+                logger = logFactory.MakeMultiCastLogger(consoleLog, logger);
+                logger.LogMessage("Loggers created");
+
+
+                logger.LogMessage("Starting project");
+
+                if (_parameters.IsTest)
+                {
+                    // TODO : Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters
+                    DBUpdateCheck check = new DBUpdateCheck(logger, _parameters, configurationProvider, executionDescriptor);
+                    check.StartTest();
+                }
+                else
+                {
+                    DBUpdateController controller = new DBUpdateController(configurationProvider, logger, _parameters);
+                    controller.Execute();
+                    if (!_parameters.IsSilent)
+                    {
+                        Console.WriteLine("Hit enter to stop the program");
+                        Console.ReadLine();
+                    }
+                }
+
+                logger.LogMessage("Fin de l'exécution \n");
+            }
+            finally
+            {
+                if (myLogFile != null) myLogFile.Dispose();
+            }
         }
     }
 }

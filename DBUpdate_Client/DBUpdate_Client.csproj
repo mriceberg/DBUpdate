@@ -81,6 +81,7 @@
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorProvider.cs" />
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorReader.cs" />
     <Compile Include="DBUpdateFileScriptToBatch.cs" />
+    <Compile Include="Logger\TextWriterLogger.cs" />
     <Compile Include="Parameters\DBUpdateParameters.cs" />
     <Compile Include="Parameters\DBUpdateParametersBuilder.cs" />
     <Compile Include="Parameters\DBUpdateParametersReader.cs" />
@@ -93,8 +94,8 @@
     <Compile Include="Logger\DefaultLoggerFactory.cs" />
     <Compile Include="DefaultUtilFactory.cs" />
     <Compile Include="Logger\FileLogger.cs" />
-    <Compile Include="Logger\Logger.cs" />
-    <Compile Include="Logger\LoggerFactory.cs" />
+    <Compile Include="Logger\ILogger.cs" />
+    <Compile Include="Logger\ILoggerFactory.cs" />
     <Compile Include="Logger\MultiCastLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
