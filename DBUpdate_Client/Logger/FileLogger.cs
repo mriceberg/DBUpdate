@@ -9,7 +9,6 @@ namespace DBUpdate_Client
 {
     public class FileLogger: ILogger
     {
-
         public void LogMessage(string message)
         {
             try

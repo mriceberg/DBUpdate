@@ -21,5 +21,10 @@ namespace DBUpdate_Client.Logger
             _textWriter.WriteLine(message);
             _textWriter.Flush();
         }
+
+        public bool IsNullOrWhiteSpace()
+        {
+            return String.IsNullOrWhiteSpace(_textWriter.ToString());
+        }
     }
 }

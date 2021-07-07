@@ -46,8 +46,6 @@ namespace DBUpdate_Client
                 }
 
                 logger = logFactory.MakeMultiCastLogger(consoleLog, logger);
-                logger.LogMessage("Loggers created");
-
 
                 logger.LogMessage("Starting project");
 
