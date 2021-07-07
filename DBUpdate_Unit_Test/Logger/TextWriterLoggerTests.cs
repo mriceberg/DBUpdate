@@ -28,9 +28,9 @@ namespace DBUpdate_Unit_Test.Tests
 
                 actualMessage = sb.ToString();
             }
-
+            var expected = expectedMessage + "\r\n";
             // Assert
-            Assert.Equal(expectedMessage, actualMessage);
+            Assert.Equal(expected, actualMessage);
         }
 
         [Fact]

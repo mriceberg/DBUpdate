@@ -8,16 +8,6 @@ namespace DBUpdate_Unit_Test.Configuration
 {
     public class DBUpdateConfigurationBuilderTest
     {
-        [Fact]
-        public void Reset_SetAllNull_OK()
-        {
-            // Arrage
-
-            // Act
-
-            // Assert
-
-        }
 
         [Fact]
         public void SetXsdName_SetValue_NotNull()
@@ -33,37 +23,5 @@ namespace DBUpdate_Unit_Test.Configuration
             Assert.NotNull(result);
         }
 
-        [Fact]
-        public void SetWorkingDirectory_SetValue_OK()
-        {
-            // Arrage
-
-            // Act
-
-            // Assert
-
-        }
-
-        [Fact]
-        public void SetFileLogger_SetValue_OK()
-        {
-            // Arrage
-
-            // Act
-
-            // Assert
-
-        }
-
-        [Fact]
-        public void SetConsoleLogger_SetValue_OK()
-        {
-            // Arrage
-
-            // Act
-
-            // Assert
-
-        }
     }
 }
