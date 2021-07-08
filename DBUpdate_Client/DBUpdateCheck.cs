@@ -52,7 +52,7 @@ namespace DBUpdate_Client
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
                 CheckBatchGoCommentedInMultiLineComment(file);
-
+                CheckParameters(_param);
                 if (_param.IsSimulation)
                 {
                     StatsWithSimulationMode(_connectionProvider, file);
@@ -94,6 +94,15 @@ namespace DBUpdate_Client
             }
         }
         // Display any warnings or errors.
+
+        private void CheckParameters(DBUpdateParameters _param)
+        {
+            if(!String.IsNullOrEmpty(_param.IsUpToBlock) && !String.IsNullOrEmpty(_param.IsBlockName))
+            {
+                _logger.LogMessage("Attention 2 paramètres sont en conflits ! MaxBlockName et BlockName. Seulement BlockName sera prit en compte.");
+            }
+        }
+
         private void ValidationCallBack(object sender, ValidationEventArgs args)
         {
             if (args.Severity == XmlSeverityType.Warning)
@@ -126,7 +135,6 @@ namespace DBUpdate_Client
                 }
             }
         }
-
         private void CheckBatchGoCommentedInMultiLineComment(string file)
         {
             var batches = new DBUpdateFileScriptToBatch().GetScriptAndSplit(file);
@@ -159,7 +167,6 @@ namespace DBUpdate_Client
 
             CheckBatchGoInLastLine(batches);
         }
-
         private void CheckBatchGoInLastLine(IEnumerable<IEnumerable<string>> batches)
         {
             if (batches.Last().Last().StartsWith("GO") || batches.Last().ElementAt(batches.Count() - 1).StartsWith("GO"))
@@ -201,7 +208,6 @@ namespace DBUpdate_Client
                 }             
             }
         }
-
         private void CheckDBStructure(IConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
         private void Log(string message) => this._logger?.LogMessage(message);
     }
