@@ -26,7 +26,6 @@ namespace DBUpdate_Client
             this.isSilent = false;
             this.isSimulation = false;
             this.isAppend = false;
-			
             this.isUpToBlock = "";
             this.isBlockName = "";
             this.isForce = false;
@@ -51,8 +50,8 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder SetIsAppend(bool value)
         {
             this.isAppend = value;
-			return this;
-		}
+            return this;
+        }
         public DBUpdateParametersBuilder SetIsUpToBlock(string value)
         {
             this.isUpToBlock = value;

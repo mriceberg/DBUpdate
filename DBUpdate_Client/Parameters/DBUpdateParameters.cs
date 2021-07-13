@@ -18,7 +18,7 @@ namespace DBUpdate_Client
         public string IsBlockName { get; private set; }
         public bool IsForce { get; private set; }
 
-        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool IsAppend, string isUpToBlock, string isBlockName, bool isForce)
+        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend, string isUpToBlock, string isBlockName, bool isForce)
         {
             IsTest = isTest;
             IsSilent = isSilent;
