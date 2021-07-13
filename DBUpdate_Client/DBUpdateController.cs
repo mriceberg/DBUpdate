@@ -50,7 +50,7 @@ namespace DBUpdate_Client
             }
         }
         private void ProcessExecutionDescriptor(DBUpdateExecutionDescriptor executionDescriptor)
-            => new DBUpdateExecutionDescriptorProcessor(this.logger, executionDescriptor, configurationProvider, configuration).Process();
+            => new DBUpdateExecutionDescriptorProcessor(this.logger, executionDescriptor, configurationProvider, configuration, parameters).Process();
         private void Log(string message) => this.logger?.LogMessage(message);
     }
 }
