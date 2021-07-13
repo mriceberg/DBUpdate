@@ -13,12 +13,20 @@ namespace DBUpdate_Client
         public bool IsSimulation { get; private set; }
         public bool IsAppend { get; private set; }
 
-        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend)
+
+        public string IsUpToBlock { get; private set; }
+        public string IsBlockName { get; private set; }
+        public bool IsForce { get; private set; }
+
+        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool IsAppend, string isUpToBlock, string isBlockName, bool isForce)
         {
             IsTest = isTest;
             IsSilent = isSilent;
             IsSimulation = isSimulation;
             IsAppend = isAppend;
+            IsUpToBlock = isUpToBlock;
+            IsBlockName = isBlockName;
+            IsForce = isForce;
         }
     }
 }

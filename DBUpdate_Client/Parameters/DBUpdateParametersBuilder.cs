@@ -12,6 +12,9 @@ namespace DBUpdate_Client
         private bool isSilent;
         private bool isSimulation;
         private bool isAppend;
+		private string isUpToBlock;
+        private string isBlockName;
+        private bool isForce;
 
         public DBUpdateParametersBuilder()
         {
@@ -23,6 +26,11 @@ namespace DBUpdate_Client
             this.isSilent = false;
             this.isSimulation = false;
             this.isAppend = false;
+			
+            this.isUpToBlock = "";
+            this.isBlockName = "";
+            this.isForce = false;
+
             return this;
         }
         public DBUpdateParametersBuilder SetIsTest(bool value)
@@ -43,11 +51,27 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder SetIsAppend(bool value)
         {
             this.isAppend = value;
+			return this;
+		}
+        public DBUpdateParametersBuilder SetIsUpToBlock(string value)
+        {
+            this.isUpToBlock = value;
+            return this;
+        }
+        public DBUpdateParametersBuilder SetIsBlockName(string value)
+        {
+            this.isBlockName = value;
+            return this;
+        }
+        public DBUpdateParametersBuilder SetIsForce(bool value)
+        {
+            this.isForce = value;
+
             return this;
         }
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend);
+            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce);
         }
 
     }
