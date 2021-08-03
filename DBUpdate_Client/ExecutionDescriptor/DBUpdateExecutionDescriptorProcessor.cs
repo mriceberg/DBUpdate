@@ -42,15 +42,22 @@ namespace DBUpdate_Client
             Log($"Run {run.Id} created.");
 
             // Read the list of blocks required to reach the expected state in the correct order
-            var blocksToExecute = executionDescriptor.BlocksToExecute.Where(bte => String.IsNullOrEmpty(this.parameters.IsBlockName) || bte.Name.ToLower()== this.parameters.IsBlockName.ToLower());
+            var blocksToExecute = executionDescriptor.BlocksToExecute.Where(bte => String.IsNullOrEmpty(this.parameters.IsBlockName) || bte.Name.ToLower() == this.parameters.IsBlockName.ToLower());
 
             if (!String.IsNullOrEmpty(parameters.IsUpToBlock))
             {
                 blocksToExecute = RemoveBlockAfterIsUpTo(blocksToExecute);
             }
 
-            // Check in DB until which blocks scripts have already been run
-            blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
+            // If the parameter isBlockName is referenced in the parameters then remove all other blockNames and place only this one
+            if (!String.IsNullOrEmpty(parameters.IsBlockName)) {
+                blocksToExecute = RemoveAllBlocksAndPutSpecificBlockName(blocksToExecute);
+            }
+            else
+            {
+                // Check in DB until which blocks scripts have already been run
+                blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
+            }
 
             // For each block not run yet
             foreach (var block in blocksToExecute)
@@ -71,11 +78,11 @@ namespace DBUpdate_Client
                     foreach (var batch in batches)
                     {
                         // Execute the batch
-                        // ExecuteBatch(batch);
+                        //ExecuteBatch(batch);
                     }
 
                     // Update the DB to indicate that the script has been executed (incl. block details)
-                    // LogScriptExecution(connectionProvider, block.Name, script, run.Id);
+                    //LogScriptExecution(connectionProvider, block.Name, script, run.Id);
                 }
             }
             run.Close();
@@ -127,9 +134,15 @@ namespace DBUpdate_Client
 
             var myScripts = myBlocks.Aggregate(new System.Text.StringBuilder(), (sb, block) => sb.AppendLine(block.Script1.Path).AppendLine(block.Script2.Path)).ToString();
         }
+
         private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlockAfterIsUpTo(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute)
         {
             blocksToExecute.TakeWhile(b => b.Name.ToLower() == parameters.IsUpToBlock.ToLower());
+            return blocksToExecute;
+        }
+        private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveAllBlocksAndPutSpecificBlockName(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute)
+        {
+            blocksToExecute.Single(b => b.Name == parameters.IsBlockName);
             return blocksToExecute;
         }
 
