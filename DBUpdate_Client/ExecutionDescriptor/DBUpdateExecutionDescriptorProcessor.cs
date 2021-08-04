@@ -42,15 +42,21 @@ namespace DBUpdate_Client
             Log($"Run {run.Id} created.");
 
             // Read the list of blocks required to reach the expected state in the correct order
-            var blocksToExecute = executionDescriptor.BlocksToExecute.Where(bte => String.IsNullOrEmpty(this.parameters.IsBlockName) || bte.Name.ToLower() == this.parameters.IsBlockName.ToLower());
+            var blocksToExecute = executionDescriptor.BlocksToExecute;
 
-            if (!String.IsNullOrEmpty(parameters.IsUpToBlock))
+            if (!String.IsNullOrEmpty(parameters.IsUpToBlock) && !String.IsNullOrEmpty(parameters.IsBlockName))
             {
-                blocksToExecute = RemoveBlockAfterIsUpTo(blocksToExecute);
+                blocksToExecute = RemoveAllBlocksAndPutSpecificBlockName(blocksToExecute);
             }
-
             // If the parameter isBlockName is referenced in the parameters then remove all other blockNames and place only this one
-            if (!String.IsNullOrEmpty(parameters.IsBlockName)) {
+            else if ((!String.IsNullOrEmpty(parameters.IsUpToBlock)) && (String.IsNullOrEmpty(parameters.IsBlockName)))
+            {
+                // Check in DB until which blocks scripts have already been run
+                blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
+                blocksToExecute = RemoveBlockAfterIsUpTo(blocksToExecute);
+            } 
+            else if ((String.IsNullOrEmpty(parameters.IsUpToBlock)) && (!String.IsNullOrEmpty(parameters.IsBlockName)))
+            {
                 blocksToExecute = RemoveAllBlocksAndPutSpecificBlockName(blocksToExecute);
             }
             else
@@ -78,11 +84,11 @@ namespace DBUpdate_Client
                     foreach (var batch in batches)
                     {
                         // Execute the batch
-                        //ExecuteBatch(batch);
+                        ExecuteBatch(batch);
                     }
 
                     // Update the DB to indicate that the script has been executed (incl. block details)
-                    //LogScriptExecution(connectionProvider, block.Name, script, run.Id);
+                    LogScriptExecution(connectionProvider, block.Name, script, run.Id);
                 }
             }
             run.Close();
@@ -137,13 +143,13 @@ namespace DBUpdate_Client
 
         private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlockAfterIsUpTo(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute)
         {
-            blocksToExecute.TakeWhile(b => b.Name.ToLower() == parameters.IsUpToBlock.ToLower());
-            return blocksToExecute;
+            return blocksToExecute.TakeWhile(b => b.Name.ToLower() == parameters.IsUpToBlock.ToLower());
         }
         private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveAllBlocksAndPutSpecificBlockName(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute)
         {
-            blocksToExecute.Single(b => b.Name == parameters.IsBlockName);
-            return blocksToExecute;
+            return new DBUpdateExecutionBlockDescriptor[] { 
+                blocksToExecute.Single(b => b.Name.ToLower() == parameters.IsBlockName.ToLower()) 
+            };
         }
 
     }
