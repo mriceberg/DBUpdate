@@ -23,6 +23,7 @@ namespace DBUpdate_Client
             .SetIsUpToBlock(ReadIsUpToBlock())
             .SetIsBlockName(ReadIsBlockName())
             .SetIsForce(ReadIsForce())
+            .SetIsScan(ReadIsScan())
             .Build();
 
         protected bool ReadIsSimulation() =>
@@ -51,6 +52,18 @@ namespace DBUpdate_Client
         protected string ReadIsBlockName()
         {
             int i = Array.FindIndex(this.args, s => s.ToLower() == "--blockname");
+            if (i >= 0 && this.args.Length > i + 1)
+            {
+                return this.args[i + 1];
+            }
+            else
+            {
+                return "";
+            }
+        }
+        protected string ReadIsScan()
+        {
+            int i = Array.FindIndex(this.args, s => s.ToLower() == "--scan");
             if (i >= 0 && this.args.Length > i + 1)
             {
                 return this.args[i + 1];

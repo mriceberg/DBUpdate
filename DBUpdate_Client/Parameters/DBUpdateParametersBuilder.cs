@@ -15,6 +15,7 @@ namespace DBUpdate_Client
 		private string isUpToBlock;
         private string isBlockName;
         private bool isForce;
+        private string isScan;
 
         public DBUpdateParametersBuilder()
         {
@@ -29,6 +30,7 @@ namespace DBUpdate_Client
             this.isUpToBlock = "";
             this.isBlockName = "";
             this.isForce = false;
+            this.isScan = "";
 
             return this;
         }
@@ -65,12 +67,16 @@ namespace DBUpdate_Client
         public DBUpdateParametersBuilder SetIsForce(bool value)
         {
             this.isForce = value;
-
+            return this;
+        }
+        public DBUpdateParametersBuilder SetIsScan(string value)
+        {
+            this.isScan = value;
             return this;
         }
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce);
+            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce, isScan);
         }
 
     }
