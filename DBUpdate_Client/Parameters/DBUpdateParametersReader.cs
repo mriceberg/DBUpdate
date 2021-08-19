@@ -24,6 +24,7 @@ namespace DBUpdate_Client
             .SetIsBlockName(ReadIsBlockName())
             .SetIsForce(ReadIsForce())
             .SetIsScan(ReadIsScan())
+            .SetIsScanOnly(ReadIsScanOnly())
             .Build();
 
         protected bool ReadIsSimulation() =>
@@ -36,6 +37,8 @@ namespace DBUpdate_Client
            this.args.Contains("--append") || this.args.Contains("--a") || this.args.Contains("--APPEND") || this.args.Contains("--A");
         protected bool ReadIsForce() =>
             this.args.Contains("--force") || this.args.Contains("--f") || this.args.Contains("--FORCE") || this.args.Contains("--F");
+        protected bool ReadIsScanOnly() =>
+            this.args.Contains("--scanOnly") || this.args.Contains("--so") || this.args.Contains("--SCANONLY") || this.args.Contains("--SO");
 
         protected string ReadIsUpToBlock()
         {
