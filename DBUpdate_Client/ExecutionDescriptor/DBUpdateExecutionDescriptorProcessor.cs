@@ -54,8 +54,8 @@ namespace DBUpdate_Client
                 // Check in DB until which blocks scripts have already been run
                 blocksToExecute = RemoveBlocksAlreadyExecuted(blocksToExecute, connectionProvider);
                 blocksToExecute = RemoveBlockAfterIsUpTo(blocksToExecute);
-            } 
-            else if ((String.IsNullOrEmpty(parameters.IsUpToBlock)) && (!String.IsNullOrEmpty(parameters.IsBlockName)))
+            }
+            else if (String.IsNullOrEmpty(parameters.IsUpToBlock) && (!String.IsNullOrEmpty(parameters.IsBlockName)))
             {
                 blocksToExecute = RemoveAllBlocksAndPutSpecificBlockName(blocksToExecute);
             }
@@ -92,7 +92,8 @@ namespace DBUpdate_Client
                 }
             }
             run.Close();
-        } 
+        }
+
         private void Log(string message) => this.logger?.LogMessage(message);
         private void CheckDBStructure(IConnectionProvider connectionProvider) => new DBUpdateStructureValidator(connectionProvider).EnsureStructureExists();
         private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlocksAlreadyExecuted(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute, IConnectionProvider connectionProvider)
@@ -105,7 +106,6 @@ namespace DBUpdate_Client
 
             return blocksToExecute.Except(executedBlockNames).ToArray();
         }
-
         private void ExecuteBatch(IEnumerable<string> batch)
         {
             using (var connection = connectionProvider.GetConnection())
@@ -125,7 +125,6 @@ namespace DBUpdate_Client
         {
             new ScriptGateway(connectionProvider).RecordExecution(runId, blockName, scriptPath);
         }
-
         private void Test(IEnumerable<DBUpdateExecutionBlockDescriptor> blocks)
         {
             var total = new int[] { 1, 2, 3, 4, 5 }.Aggregate(200, (value, accumulator) => accumulator + value);
@@ -140,7 +139,6 @@ namespace DBUpdate_Client
 
             var myScripts = myBlocks.Aggregate(new System.Text.StringBuilder(), (sb, block) => sb.AppendLine(block.Script1.Path).AppendLine(block.Script2.Path)).ToString();
         }
-
         private IEnumerable<DBUpdateExecutionBlockDescriptor> RemoveBlockAfterIsUpTo(IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute)
         {
             return blocksToExecute.TakeWhile(b => b.Name.ToLower() == parameters.IsUpToBlock.ToLower());
