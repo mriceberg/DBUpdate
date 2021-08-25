@@ -10,7 +10,7 @@ namespace DBUpdate_Client
         private string name;
         private IList<DBUpdateExecutionBlockDescriptor> blocks;
         private IList<DBUpdateExecutionBlockDescriptor> blocksToExecute;
-        
+        private List<string> missingSQLFileInXml;
 
         public DBUpdateExecutionDescriptorBuilder()
         {
@@ -24,6 +24,7 @@ namespace DBUpdate_Client
             this.name = null;
             this.blocks = new List<DBUpdateExecutionBlockDescriptor>();
             this.blocksToExecute = new List<DBUpdateExecutionBlockDescriptor>();
+            this.missingSQLFileInXml = new List<string>();
 
             return this;
         }
@@ -58,9 +59,15 @@ namespace DBUpdate_Client
 
             return this;
         }
+        public DBUpdateExecutionDescriptorBuilder AddMissingSQLFileInXml(IEnumerable<string> values)
+        {
+            missingSQLFileInXml.AddRange(values);
+
+            return this;
+        }
         public DBUpdateExecutionDescriptorBuilder AddBlockToExecute(string blockName) => AddBlockToExecute(blocks.Single(b => b.Name == blockName));
 
         public DBUpdateExecutionDescriptor Build()
-            => new DBUpdateExecutionDescriptor(path, connectionStringName, blocks, blocksToExecute, name);
+            => new DBUpdateExecutionDescriptor(path, connectionStringName, blocks, blocksToExecute, name, missingSQLFileInXml);
     }
 }

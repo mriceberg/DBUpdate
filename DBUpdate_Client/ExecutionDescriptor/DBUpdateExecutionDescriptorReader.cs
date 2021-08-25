@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -18,7 +19,9 @@ namespace DBUpdate_Client
             DBUpdateExecutionDescriptorBuilder builder = new DBUpdateExecutionDescriptorBuilder()
                 .SetPath(filePath)
                 .SetConnectionStringName(connectionStringName)
-                .SetName(Path.GetFileName(fileFolder));
+                .SetName(Path.GetFileName(fileFolder))
+                .AddMissingSQLFileInXml(GetMissingSqlFileInXml(fileFolder));
+               
                 
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
             DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
@@ -50,6 +53,14 @@ namespace DBUpdate_Client
             }
 
             return builder.Build();
+        }
+
+        private IEnumerable<string> GetMissingSqlFileInXml(string fileFolder)
+        {
+            IEnumerable<string> missingSqlFile;
+            missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
+
+            return missingSqlFile;
         }
     }
 }
