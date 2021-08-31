@@ -16,9 +16,8 @@ namespace DBUpdate_Client
         public string IsBlockName { get; private set; }
         public bool IsForce { get; private set; }
         public string IsScan { get; private set; }
-        public bool IsScanOnly { get; private set; }
 
-        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend, string isUpToBlock, string isBlockName, bool isForce, string isScan, bool isScanOnly)
+        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend, string isUpToBlock, string isBlockName, bool isForce, string isScan)
         {
             IsTest = isTest;
             IsSilent = isSilent;
@@ -28,7 +27,6 @@ namespace DBUpdate_Client
             IsBlockName = isBlockName;
             IsForce = isForce;
             IsScan = isScan;
-            IsScanOnly = isScanOnly;
         }
     }
 }

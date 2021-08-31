@@ -22,7 +22,6 @@ namespace DBUpdate_Client
                 .SetName(Path.GetFileName(fileFolder))
                 .AddMissingSQLFileInXml(GetMissingSqlFileInXml(fileFolder));
                
-                
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
             DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
             foreach (var blockElement in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
@@ -57,10 +56,14 @@ namespace DBUpdate_Client
 
         private IEnumerable<string> GetMissingSqlFileInXml(string fileFolder)
         {
-            IEnumerable<string> missingSqlFile;
-            missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
 
-            return missingSqlFile;
+            DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile();
+            return (IEnumerable<string>)dBUpdateScanSqlFile;
+
+            //IEnumerable<string> missingSqlFile;
+            //missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
+
+            //return missingSqlFile;
         }
     }
 }

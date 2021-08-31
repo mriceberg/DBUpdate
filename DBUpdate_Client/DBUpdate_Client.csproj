@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Configuration\BaseConfigurationProvider.cs" />
     <Compile Include="BaseConnectionProvider.cs" />
+    <Compile Include="Scripts\DBUpdateScanSqlFile.cs" />
     <Compile Include="Logger\BaseLogger.cs" />
     <Compile Include="Configuration\IConfigurationProvider.cs" />
     <Compile Include="IConnectionProvider.cs" />
@@ -80,15 +81,15 @@
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorProcessor.cs" />
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorProvider.cs" />
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorReader.cs" />
-    <Compile Include="DBUpdateFileScriptToBatch.cs" />
+    <Compile Include="Scripts\DBUpdateFileScriptToBatch.cs" />
     <Compile Include="Logger\TextWriterLogger.cs" />
     <Compile Include="Parameters\DBUpdateParameters.cs" />
     <Compile Include="Parameters\DBUpdateParametersBuilder.cs" />
     <Compile Include="Parameters\DBUpdateParametersReader.cs" />
     <Compile Include="DBUpdateRun.cs" />
-    <Compile Include="DBUpdateScript.cs" />
-    <Compile Include="DBUpdateScriptBuilder.cs" />
-    <Compile Include="DBUpdateScriptToBatch.cs" />
+    <Compile Include="Scripts\DBUpdateScript.cs" />
+    <Compile Include="Scripts\DBUpdateScriptBuilder.cs" />
+    <Compile Include="Scripts\DBUpdateScriptToBatch.cs" />
     <Compile Include="DBUpdateStructureValidator.cs" />
     <Compile Include="Configuration\DefaultConfigurationProvider.cs" />
     <Compile Include="Logger\DefaultLoggerFactory.cs" />
@@ -100,7 +101,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunGateway.cs" />
-    <Compile Include="ScriptGateway.cs" />
+    <Compile Include="Scripts\ScriptGateway.cs" />
     <Compile Include="UtilFactory.cs" />
   </ItemGroup>
   <ItemGroup>
