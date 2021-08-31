@@ -24,35 +24,43 @@ namespace DBUpdate_Client
         public IEnumerable<string> Scan(string filePath)
         {
             string fileFolder = Path.GetDirectoryName(filePath);
-            ScanSQLFiles(fileFolder);
-            GetAllScriptsNotReferencedInAllXml(GetXmlFiles(), filePath);
-            
+            var sqlFiles = ScanSQLFiles(fileFolder);
+            var sqlScriptInXml = GetAllScriptsInAllXml(GetXmlFiles(), filePath);
+
+            return sqlScriptInXml.Except(sqlFiles);
         }
 
 
-
-
-        private IEnumerable<string> GetAllScriptsNotReferencedInAllXml(IEnumerable<string> xmlFiles, string filePath)
+        private IEnumerable<string> GetAllScriptsInAllXml(IEnumerable<string> xmlFiles, string filePath)
         {
             string fileFolder = Path.GetDirectoryName(filePath);
-            XDocument descriptor = XDocument.Load(filePath);
+            //string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
+            IEnumerable<string> listScripts = new string[] { };
 
+            foreach (var xmlfile in xmlFiles)
+            {
+                XDocument descriptor = XDocument.Load(xmlfile);
+                //string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
+
+                foreach (var blockDefinition in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
+                {
+                    foreach (var scriptElement in blockDefinition.Elements("script"))
+                    {
+                        string scriptName = scriptElement.Value;
+                        listScripts.Append(scriptName);
+                    }
+                }
+            }
+            return listScripts;
         }
-
-
-
-
-
-
-
 
 
         private IEnumerable<string> ScanSQLFiles(string fileFolder)
         {
-            IEnumerable<string> missingSqlFile;
-            missingSqlFile = Directory.GetFiles(fileFolder, "*.sql");
+            IEnumerable<string> SqlFiles;
+            SqlFiles = Directory.GetFiles(fileFolder, "*.sql");
 
-            return missingSqlFile;
+            return SqlFiles;
         }
         private IEnumerable<string> GetXmlFiles()
         {
