@@ -21,13 +21,18 @@ namespace DBUpdate_Client
             this.parameters = parameters;
         }
 
-        public IEnumerable<string> Scan(string filePath)
+        public IEnumerable<string> Scan()
         {
-            string fileFolder = Path.GetDirectoryName(filePath);
+            string fileFolder = configuration.WorkingDirectory;
+            string file = configuration.XsdName;
+            string filePath = fileFolder + "\\" + file;
+
+            //string fileFolder = Path.GetDirectoryName(filePath);
             var sqlFiles = ScanSQLFiles(fileFolder);
             var sqlScriptInXml = GetAllScriptsInAllXml(GetXmlFiles(), filePath);
 
-            return sqlScriptInXml.Except(sqlFiles);
+            return sqlFiles.Except(sqlScriptInXml);
+            //SQLscript in xml return nothing
         }
 
 
@@ -46,7 +51,7 @@ namespace DBUpdate_Client
                 {
                     foreach (var scriptElement in blockDefinition.Elements("script"))
                     {
-                        string scriptName = scriptElement.Value;
+                        string scriptName = scriptElement.Value.ToLower();
                         listScripts.Append(scriptName);
                     }
                 }
@@ -54,13 +59,13 @@ namespace DBUpdate_Client
             return listScripts;
         }
 
-
         private IEnumerable<string> ScanSQLFiles(string fileFolder)
         {
-            IEnumerable<string> SqlFiles;
-            SqlFiles = Directory.GetFiles(fileFolder, "*.sql");
+            IEnumerable<string> sqlFiles;
+            sqlFiles = Directory.GetFiles(fileFolder, "*.sql");
+            sqlFiles.Select(f => f.ToLower());
 
-            return SqlFiles;
+            return sqlFiles;
         }
         private IEnumerable<string> GetXmlFiles()
         {

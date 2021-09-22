@@ -57,9 +57,9 @@ namespace DBUpdate_Client
         private IEnumerable<string> GetMissingSqlFileInXml()
         {
 
-            DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile().Scan();
-            return dBUpdateScanSqlFile;
-
+            //DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configuration,parameters);
+            //return dBUpdateScanSqlFile;
+            return null;
             //IEnumerable<string> missingSqlFile;
             //missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
 

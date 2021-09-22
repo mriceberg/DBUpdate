@@ -18,6 +18,12 @@ namespace DBUpdate_Client
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
+            if (!String.IsNullOrEmpty(_parameters.IsScan))
+            {
+                DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configurationProvider, _parameters);
+                dBUpdateScanSqlFile.Scan();
+            }
+
             DBUpdateExecutionDescriptor executionDescriptor = new DBUpdateExecutionDescriptorReader().Read("C:/temp/workingdir/ScriptsEtt.xml");
             StreamWriter myLogFile = null;
 
