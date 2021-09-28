@@ -63,7 +63,8 @@
   <ItemGroup>
     <Compile Include="Configuration\BaseConfigurationProvider.cs" />
     <Compile Include="BaseConnectionProvider.cs" />
-    <Compile Include="Scripts\DBUpdateScanSqlFile.cs" />
+    <Compile Include="Scripts\AddMissingSqlFilesInXml.cs" />
+    <Compile Include="Scripts\CheckMissingSqlFilesInXml.cs" />
     <Compile Include="Logger\BaseLogger.cs" />
     <Compile Include="Configuration\IConfigurationProvider.cs" />
     <Compile Include="IConnectionProvider.cs" />

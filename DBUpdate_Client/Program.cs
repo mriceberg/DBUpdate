@@ -18,10 +18,16 @@ namespace DBUpdate_Client
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
+
+            IEnumerable<string> sqlScriptsNotReferenced;
+            string xmlFileTest;
             if (!String.IsNullOrEmpty(_parameters.IsScan))
             {
-                DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configurationProvider, _parameters);
-                dBUpdateScanSqlFile.Scan();
+                //CheckMissingSqlFilesInXml dBUpdateScanSqlFile = new CheckMissingSqlFilesInXml(configurationProvider, _parameters);
+                //sqlScriptsNotReferenced = dBUpdateScanSqlFile.Scan();
+
+                AddMissingSqlFilesInXml addMissingSqlFilesInXml = new AddMissingSqlFilesInXml(configurationProvider, _parameters);
+                addMissingSqlFilesInXml.AddMissingScriptsInXml();
             }
 
             DBUpdateExecutionDescriptor executionDescriptor = new DBUpdateExecutionDescriptorReader().Read("C:/temp/workingdir/ScriptsEtt.xml");

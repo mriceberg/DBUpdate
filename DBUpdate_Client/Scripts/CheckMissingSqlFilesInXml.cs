@@ -8,13 +8,14 @@ using System.Xml.Linq;
 
 namespace DBUpdate_Client
 {
-    public class DBUpdateScanSqlFile
+    public class CheckMissingSqlFilesInXml
     {
         private readonly IConfigurationProvider configurationProvider;
         private DBUpdateConfiguration configuration;
         private DBUpdateParameters parameters;
+        private List<string> resultAllSqlFilesNotReferencedInXmlFiles;
 
-        public DBUpdateScanSqlFile(IConfigurationProvider configuration, DBUpdateParameters parameters)
+        public CheckMissingSqlFilesInXml(IConfigurationProvider configuration, DBUpdateParameters parameters)
         {
             this.configurationProvider = configuration;
             this.configuration = ReadConfiguration();
@@ -27,33 +28,34 @@ namespace DBUpdate_Client
             string file = configuration.XsdName;
             string filePath = fileFolder + "\\" + file;
 
-            //string fileFolder = Path.GetDirectoryName(filePath);
             var sqlFiles = ScanSQLFiles(fileFolder);
             var sqlScriptInXml = GetAllScriptsInAllXml(GetXmlFiles(), filePath);
+            resultAllSqlFilesNotReferencedInXmlFiles = new List<string>();
 
-            return sqlFiles.Except(sqlScriptInXml);
-            //SQLscript in xml return nothing
+
+            foreach (var sqlFile in sqlFiles)
+            {
+                if (!sqlScriptInXml.Contains(sqlFile)) {
+                    resultAllSqlFilesNotReferencedInXmlFiles.Add(sqlFile);
+                    Console.WriteLine(sqlFile);
+                }
+            }
+            return resultAllSqlFilesNotReferencedInXmlFiles;
         }
-
 
         private IEnumerable<string> GetAllScriptsInAllXml(IEnumerable<string> xmlFiles, string filePath)
         {
             string fileFolder = Path.GetDirectoryName(filePath);
-            //string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
-            IEnumerable<string> listScripts = new string[] { };
+            List<string> listScripts = new List<string>();
 
             foreach (var xmlfile in xmlFiles)
             {
                 XDocument descriptor = XDocument.Load(xmlfile);
-                //string connectionStringName = descriptor.Root.Element("configuration").Element("connectionStringName").Value;
 
                 foreach (var blockDefinition in descriptor.Root.Element("blockDefinitions").Elements("blockDefinition"))
                 {
-                    foreach (var scriptElement in blockDefinition.Elements("script"))
-                    {
-                        string scriptName = scriptElement.Value.ToLower();
-                        listScripts.Append(scriptName);
-                    }
+                    listScripts.AddRange(blockDefinition.Elements("script").Select(s => s.Value.ToLower()));
+
                 }
             }
             return listScripts;
@@ -61,16 +63,16 @@ namespace DBUpdate_Client
 
         private IEnumerable<string> ScanSQLFiles(string fileFolder)
         {
-            IEnumerable<string> sqlFiles;
-            sqlFiles = Directory.GetFiles(fileFolder, "*.sql");
-            sqlFiles.Select(f => f.ToLower());
-
+            List<string> sqlFiles;
+            sqlFiles = Directory.GetFiles(fileFolder, "*.sql").Select(file => Path.GetFileName(file).ToLower()).ToList();
             return sqlFiles;
         }
+
         private IEnumerable<string> GetXmlFiles()
         {
             return new DBUpdateExecutionDescriptorProvider().GetFilesToRead(this.configuration.WorkingDirectory);
         }
+
         private DBUpdateConfiguration ReadConfiguration() => new DBUpdateConfigurationReader(this.configurationProvider).Read();
     }
 }
