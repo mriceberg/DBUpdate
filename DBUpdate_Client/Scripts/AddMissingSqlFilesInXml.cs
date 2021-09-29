@@ -10,6 +10,7 @@ namespace DBUpdate_Client
 {
     public class AddMissingSqlFilesInXml
     {
+        private readonly ILogger _logger;
         private readonly IConfigurationProvider _configurationProvider;
         private DBUpdateConfiguration _configuration;
         private DBUpdateParameters _parameters;
@@ -17,53 +18,68 @@ namespace DBUpdate_Client
         private string _xmlFileFromScanParameters;
         private XElement _blockDefinitionDummy;
         string name;
-        public AddMissingSqlFilesInXml(IConfigurationProvider configuration, DBUpdateParameters parameters)
+        public AddMissingSqlFilesInXml(ILogger logger, IConfigurationProvider configuration, DBUpdateParameters parameters)
         {
+            this._logger = logger;
             this._configurationProvider = configuration;
             this._configuration = ReadConfiguration();
             this._parameters = parameters;
             this._listOfFilesToAdd = GetListOfFilesToAdd();
+            this._xmlFileFromScanParameters = SetXMlFileName();
         }
         public void AddMissingScriptsInXml()
         {
-            _xmlFileFromScanParameters = _configuration.WorkingDirectory + "\\" + _parameters.IsScan + ".xml";
-
             if (_listOfFilesToAdd.Any())
             {
                 XDocument descriptor = XDocument.Load(_xmlFileFromScanParameters);
                 XAttribute dummyBlock = new XAttribute("name", "DummyBlock");
 
-                descriptor.Root.Elements("blockDefinitions").Last().Add(new XElement("blockDefinition"));
-
-                _blockDefinitionDummy = descriptor.Root.Element("blockDefinitions").Elements("blockDefinition").Last();
-
                 if (String.IsNullOrEmpty(GetAllXAttributesNameValue()))
                 {
-                    _blockDefinitionDummy.Add(dummyBlock);
-                }
-
-                foreach (string script in _listOfFilesToAdd)
+                    descriptor.Root.Elements("blockDefinitions").Last().Add(new XElement("blockDefinition", dummyBlock));
+                    _blockDefinitionDummy = descriptor.Root.Element("blockDefinitions").Elements("blockDefinition").Last();
+                } else
                 {
-                    _blockDefinitionDummy.Add(new XElement("script", script));
+                    _blockDefinitionDummy = descriptor.Root.Element("blockDefinitions").Elements("blockDefinition").Last();
                 }
-                descriptor.Save(_xmlFileFromScanParameters);
 
+
+                if (CheckIfOnlyOneDummyBlock())
+                {
+                    foreach (string script in _listOfFilesToAdd)
+                    {
+                        _blockDefinitionDummy.Add(new XElement("script", script));
+                    }
+                } 
+                else 
+                {
+                    foreach (string script in _listOfFilesToAdd)
+                    {
+                        Log("Le script : " + script + " ne sera pas ajouté !");
+                    }
+                }
+
+                descriptor.Save(_xmlFileFromScanParameters);
             }
         }
-
-        private string GetAllXAttributesNameValue()
+        private bool CheckIfOnlyOneDummyBlock()
         {
-            //XDocument descriptor = XDocument.Load(_xmlFileFromScanParameters);
             XmlDocument descriptor = new XmlDocument();
             descriptor.Load(_xmlFileFromScanParameters);
-            //IEnumerable<XElement> listOfElements = descriptor.Elements();
-            //List<string> blockDefinitionAttributeNameValue = new List<string>();
-            //foreach (var nameValue in listOfElements)
-            //{
-            //    blockDefinitionAttributeNameValue.Add(nameValue.ToString());
-            //}
-            //return blockDefinitionAttributeNameValue;
+            XmlNodeList elt2 = descriptor.SelectNodes("//blockDefinition[@name='DummyBlock']") as XmlNodeList;
+            if (elt2.Count > 1)
+            {
+                Log("Attention vous avez plusieurs blockDefinition avec le nom DummyBlock.");
+                return false;
+            }
+            return true;
+        }
+        private string GetAllXAttributesNameValue()
+        {
+            XmlDocument descriptor = new XmlDocument();
+            descriptor.Load(_xmlFileFromScanParameters);
             XmlElement elt = descriptor.SelectSingleNode("//blockDefinition[@name='DummyBlock']") as XmlElement;
+            
             if (elt != null)
             {
                 name = elt.GetAttribute("name");
@@ -77,6 +93,13 @@ namespace DBUpdate_Client
             return _listOfFilesToAdd = checkMissingSqlFiles.Scan();
         }
 
+        private string SetXMlFileName()
+        {
+            return _xmlFileFromScanParameters = _configuration.WorkingDirectory + "\\" + _parameters.IsScan + ".xml";
+        }
+
         private DBUpdateConfiguration ReadConfiguration() => new DBUpdateConfigurationReader(this._configurationProvider).Read();
+
+        private void Log(string message) => this._logger?.LogMessage(message);
     }
 }

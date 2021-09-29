@@ -18,15 +18,9 @@ namespace DBUpdate_Client
             _config = new DBUpdateConfigurationReader(configurationProvider).Read();
             _parameters = new DBUpdateParametersReader(args).Read;
 
-
-            IEnumerable<string> sqlScriptsNotReferenced;
-            string xmlFileTest;
             if (!String.IsNullOrEmpty(_parameters.IsScan))
             {
-                //CheckMissingSqlFilesInXml dBUpdateScanSqlFile = new CheckMissingSqlFilesInXml(configurationProvider, _parameters);
-                //sqlScriptsNotReferenced = dBUpdateScanSqlFile.Scan();
-
-                AddMissingSqlFilesInXml addMissingSqlFilesInXml = new AddMissingSqlFilesInXml(configurationProvider, _parameters);
+                AddMissingSqlFilesInXml addMissingSqlFilesInXml = new AddMissingSqlFilesInXml(logger, configurationProvider, _parameters);
                 addMissingSqlFilesInXml.AddMissingScriptsInXml();
             }
 
@@ -60,6 +54,9 @@ namespace DBUpdate_Client
 
                 logger.LogMessage(_parameters.IsUpToBlock);
                 logger.LogMessage("Starting project");
+
+
+
 
                 if (_parameters.IsTest)
                 {
