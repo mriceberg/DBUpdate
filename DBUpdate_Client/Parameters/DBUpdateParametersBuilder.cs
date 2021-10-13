@@ -16,6 +16,7 @@ namespace DBUpdate_Client
         private string isBlockName;
         private bool isForce;
         private string isScan;
+        private string nameOfDummyBlock;
 
         public DBUpdateParametersBuilder()
         {
@@ -31,6 +32,7 @@ namespace DBUpdate_Client
             this.isBlockName = "";
             this.isForce = false;
             this.isScan = "";
+            this.nameOfDummyBlock = "";
 
             return this;
         }
@@ -74,10 +76,15 @@ namespace DBUpdate_Client
             this.isScan = value;
             return this;
         }
+        public DBUpdateParametersBuilder SetNameOfDummyBlock(string value)
+        {
+            this.nameOfDummyBlock = value;
+            return this;
+        }
 
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce, isScan);
+            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce, isScan, nameOfDummyBlock);
         }
 
     }
