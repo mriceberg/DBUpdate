@@ -24,7 +24,7 @@ namespace DBUpdate_Client
             .SetIsBlockName(ReadIsBlockName())
             .SetIsForce(ReadIsForce())
             .SetIsScan(ReadIsScan())
-            .SetNameOfDummyBlock())
+            .SetNameOfDummyBlock(ReadNameOfDummyBlock())
             .Build();
 
         protected bool ReadIsSimulation() =>
