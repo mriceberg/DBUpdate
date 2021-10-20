@@ -59,11 +59,12 @@ namespace DBUpdate_Client
 
             //DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configuration,parameters);
             //return dBUpdateScanSqlFile;
-            return null;
+            //return null;
             //IEnumerable<string> missingSqlFile;
             //missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
 
             //return missingSqlFile;
+            CheckMissingSqlFilesInXml missingFiles = new CheckMissingSqlFilesInXml();
         }
     }
 }

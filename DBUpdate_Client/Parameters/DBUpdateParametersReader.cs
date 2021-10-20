@@ -83,7 +83,7 @@ namespace DBUpdate_Client
             }
             else
             {
-                return "";
+                return "DefaultDummyBlock";
             }
         }
     }

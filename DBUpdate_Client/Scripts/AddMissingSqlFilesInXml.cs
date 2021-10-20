@@ -17,6 +17,7 @@ namespace DBUpdate_Client
         private IEnumerable<string> _listOfFilesToAdd;
         private string _xmlFileFromScanParameters;
         private XElement _blockDefinitionDummy;
+        private string _nameDummyBlockByParameters;
 
         public AddMissingSqlFilesInXml(ILogger logger, IConfigurationProvider configuration, DBUpdateParameters parameters)
         {
@@ -26,13 +27,14 @@ namespace DBUpdate_Client
             this._parameters = parameters;
             this._listOfFilesToAdd = GetListOfFilesToAdd();
             this._xmlFileFromScanParameters = SetXMlFileName();
+            this._nameDummyBlockByParameters = parameters.NameOfDummyBlock;
         }
         public void AddMissingScriptsInXml()
         {
             if (_listOfFilesToAdd.Any())
             {
                 XDocument descriptor = XDocument.Load(_xmlFileFromScanParameters);
-                XAttribute dummyBlock = new XAttribute("name", "DummyBlock");
+                XAttribute dummyBlock = new XAttribute("name", _nameDummyBlockByParameters);
 
                 if ((_blockDefinitionDummy = GetAllXAttributesNameValue(descriptor)) == null)
                 {
@@ -61,9 +63,9 @@ namespace DBUpdate_Client
         //    }
         //    return true;
         //}
-        
+
         private XElement GetAllXAttributesNameValue(XDocument descriptor)
-            => descriptor.Descendants("blockDefinition").Where(node => node.Attribute("name").Value == "DummyBlock").SingleOrDefault();
+            => descriptor.Descendants("blockDefinition").Where(node => node.Attribute("name").Value == _nameDummyBlockByParameters).SingleOrDefault();
 
         private IEnumerable<string> GetListOfFilesToAdd()
         {
