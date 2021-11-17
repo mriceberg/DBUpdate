@@ -19,8 +19,8 @@ namespace DBUpdate_Client
             DBUpdateExecutionDescriptorBuilder builder = new DBUpdateExecutionDescriptorBuilder()
                 .SetPath(filePath)
                 .SetConnectionStringName(connectionStringName)
-                .SetName(Path.GetFileName(fileFolder))
-                .AddMissingSQLFileInXml(GetMissingSqlFileInXml());
+                .SetName(Path.GetFileName(fileFolder));
+                //.AddMissingSQLFileInXml(GetMissingSqlFileInXml());
                
             DBUpdateExecutionBlockDescriptorBuilder blockBuilder = new DBUpdateExecutionBlockDescriptorBuilder();
             DBUpdateScriptBuilder scriptBuilder = new DBUpdateScriptBuilder();
@@ -54,17 +54,19 @@ namespace DBUpdate_Client
             return builder.Build();
         }
 
-        private IEnumerable<string> GetMissingSqlFileInXml()
-        {
+        //private IEnumerable<string> GetMissingSqlFileInXml()
+        //{
 
-            //DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configuration,parameters);
-            //return dBUpdateScanSqlFile;
-            //return null;
-            //IEnumerable<string> missingSqlFile;
-            //missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
+        //    //DBUpdateScanSqlFile dBUpdateScanSqlFile = new DBUpdateScanSqlFile(configuration,parameters);
+        //    //return dBUpdateScanSqlFile;
+        //    //return null;
+        //    //IEnumerable<string> missingSqlFile;
+        //    //missingSqlFile = Directory.GetFiles(fileFolder,"*.sql");
 
-            //return missingSqlFile;
-            CheckMissingSqlFilesInXml missingFiles = new CheckMissingSqlFilesInXml();
-        }
+        //    //return missingSqlFile;
+        //    //CheckMissingSqlFilesInXml missingFiles = new CheckMissingSqlFilesInXml();
+        //    List<string> optionList = new List<string>();
+        //    return optionList;
+        //}
     }
 }

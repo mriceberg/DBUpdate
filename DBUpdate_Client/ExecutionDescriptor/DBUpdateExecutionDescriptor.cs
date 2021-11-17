@@ -9,17 +9,17 @@ namespace DBUpdate_Client
         public string Name { get; private set; }
         public IEnumerable<DBUpdateExecutionBlockDescriptor> Blocks { get; private set; }
         public IEnumerable<DBUpdateExecutionBlockDescriptor> BlocksToExecute { get; private set; }
-        public IEnumerable<string> MissingSQLFileInXml { get; private set; }
+        //public IEnumerable<string> MissingSQLFileInXml { get; private set; }
 
         public DBUpdateExecutionDescriptor(string path, string connectionStringName, IEnumerable<DBUpdateExecutionBlockDescriptor> blocks,
-            IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute,string name, IEnumerable<string> missingSQLFileInXml)
+            IEnumerable<DBUpdateExecutionBlockDescriptor> blocksToExecute,string name)
         {
             this.Path = path;
             this.ConnectionStringName = connectionStringName;
             this.Name = name;
             this.Blocks = blocks;
             this.BlocksToExecute = blocksToExecute;
-            this.MissingSQLFileInXml = missingSQLFileInXml;
+            //this.MissingSQLFileInXml = missingSQLFileInXml;
         }
     }
 }

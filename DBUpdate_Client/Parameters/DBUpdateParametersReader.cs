@@ -79,11 +79,19 @@ namespace DBUpdate_Client
             int i = Array.FindIndex(this.args, s => s.ToLower() == "--nameofdummyblock");
             if (i >= 0 && this.args.Length > i + 1)
             {
-                return this.args[i + 1];
+                string nextArgs = this.args[i + 1];
+                if(nextArgs.StartsWith("--"))
+                {
+                    return "DefaultDummyBlock";
+                }
+                else
+                {
+                    return this.args[i + 1];
+                }
             }
             else
             {
-                return "DefaultDummyBlock";
+                return null;
             }
         }
     }
