@@ -12,8 +12,8 @@ namespace DBUpdate_Client
     {
         private readonly ILogger _logger;
         private readonly IConfigurationProvider _configurationProvider;
-        private DBUpdateConfiguration _configuration;
-        private DBUpdateParameters _parameters;
+        private readonly DBUpdateConfiguration _configuration;
+        private readonly DBUpdateParameters _parameters;
         private IEnumerable<string> _listOfFilesToAdd;
         private string _xmlFileFromScanParameters;
         private XElement _blockDefinitionDummy;
