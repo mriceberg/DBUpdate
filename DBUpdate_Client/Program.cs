@@ -56,8 +56,6 @@ namespace DBUpdate_Client
                 logger.LogMessage("Starting project");
 
 
-
-
                 if (_parameters.IsTest)
                 {
                     // TODO : Créer un DbUpdateCheckParamaters qui va être passé a DbUpdateCheck à la place de _parameters

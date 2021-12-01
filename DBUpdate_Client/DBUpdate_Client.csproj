@@ -82,6 +82,7 @@
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorProcessor.cs" />
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorProvider.cs" />
     <Compile Include="ExecutionDescriptor\DBUpdateExecutionDescriptorReader.cs" />
+    <Compile Include="Scripts\CorrectionScriptAfterCrashing.cs" />
     <Compile Include="Scripts\DBUpdateFileScriptToBatch.cs" />
     <Compile Include="Logger\TextWriterLogger.cs" />
     <Compile Include="Parameters\DBUpdateParameters.cs" />
