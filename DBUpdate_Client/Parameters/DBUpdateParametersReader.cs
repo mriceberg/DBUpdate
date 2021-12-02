@@ -25,6 +25,7 @@ namespace DBUpdate_Client
             .SetIsForce(ReadIsForce())
             .SetIsScan(ReadIsScan())
             .SetNameOfDummyBlock(ReadNameOfDummyBlock())
+            .SetNameOfContinueAfterCrashing(ReadContinueAfterCrashing())
             .Build();
 
         protected bool ReadIsSimulation() =>
@@ -37,6 +38,8 @@ namespace DBUpdate_Client
            this.args.Contains("--append") || this.args.Contains("--a") || this.args.Contains("--APPEND") || this.args.Contains("--A");
         protected bool ReadIsForce() =>
             this.args.Contains("--force") || this.args.Contains("--f") || this.args.Contains("--FORCE") || this.args.Contains("--F");
+        protected bool ReadContinueAfterCrashing() =>
+            this.args.Contains("--continueAfterCrashing") || this.args.Contains("--c") || this.args.Contains("--CONTINUEAFTERCRASHING") || this.args.Contains("--C");
 
         protected string ReadIsUpToBlock()
         {

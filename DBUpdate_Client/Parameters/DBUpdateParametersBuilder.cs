@@ -17,6 +17,7 @@ namespace DBUpdate_Client
         private bool isForce;
         private string isScan;
         private string nameOfDummyBlock;
+        private bool continueAfterCrashing;
 
         public DBUpdateParametersBuilder()
         {
@@ -33,6 +34,7 @@ namespace DBUpdate_Client
             this.isForce = false;
             this.isScan = "";
             this.nameOfDummyBlock = "";
+            this.continueAfterCrashing = false;
 
             return this;
         }
@@ -81,10 +83,15 @@ namespace DBUpdate_Client
             this.nameOfDummyBlock = value;
             return this;
         }
+        public DBUpdateParametersBuilder SetNameOfContinueAfterCrashing(bool value)
+        {
+            this.continueAfterCrashing = value;
+            return this;
+        }
 
         public DBUpdateParameters Build()
         {
-            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce, isScan, nameOfDummyBlock);
+            return new DBUpdateParameters(isTest, isSilent, isSimulation, isAppend, isUpToBlock, isBlockName, isForce, isScan, nameOfDummyBlock, continueAfterCrashing);
         }
 
     }
