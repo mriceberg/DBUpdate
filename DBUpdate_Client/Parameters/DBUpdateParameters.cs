@@ -17,9 +17,9 @@ namespace DBUpdate_Client
         public bool IsForce { get; private set; }
         public string IsScan { get; private set; }
         public string NameOfDummyBlock { get; set; }
-        public bool ContinueAfterCrashing { get; set; }
+        public bool IsPromptOnError { get; set; }
 
-        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend, string isUpToBlock, string isBlockName, bool isForce, string isScan, string nameOfDummyBlock, bool continueAfterCrashing)
+        public DBUpdateParameters(bool isTest, bool isSilent, bool isSimulation, bool isAppend, string isUpToBlock, string isBlockName, bool isForce, string isScan, string nameOfDummyBlock, bool isPromtOnError)
         {
             IsTest = isTest;
             IsSilent = isSilent;
@@ -30,7 +30,7 @@ namespace DBUpdate_Client
             IsForce = isForce;
             IsScan = isScan;
             NameOfDummyBlock = nameOfDummyBlock;
-            ContinueAfterCrashing = continueAfterCrashing;
+            IsPromptOnError = isPromtOnError;
         }
     }
 }

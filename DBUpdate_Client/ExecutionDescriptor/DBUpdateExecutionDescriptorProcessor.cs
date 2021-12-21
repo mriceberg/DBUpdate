@@ -84,7 +84,7 @@ namespace DBUpdate_Client
                     foreach (var batch in batches)
                     {
                         // Execute the batch
-                        ExecuteBatch(batch);
+                        ExecuteBatch(batch, parameters, script);
                     }
 
                     // Update the DB to indicate that the script has been executed (incl. block details)
@@ -106,18 +106,60 @@ namespace DBUpdate_Client
 
             return blocksToExecute.Except(executedBlockNames).ToArray();
         }
-        private void ExecuteBatch(IEnumerable<string> batch)
+        private void ExecuteBatch(IEnumerable<string> batch, DBUpdateParameters parameters, string script)
         {
-            using (var connection = connectionProvider.GetConnection())
-            {
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandType = System.Data.CommandType.Text;
-                    command.CommandText = String.Join(Environment.NewLine, batch);
+            bool retry = true;
 
-                    connection.Open();
-                    command.ExecuteNonQuery();
+            while (retry)
+            {
+                try
+                {
+                    using (var connection = connectionProvider.GetConnection())
+                    {
+                        using (var command = new SqlCommand())
+                        {
+                            command.Connection = connection;
+                            command.CommandType = System.Data.CommandType.Text;
+                            command.CommandText = String.Join(Environment.NewLine, batch);
+
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            retry = false;
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    // Display error message
+                    // si on a passé le paramètre qui dit de ne pas s'arrêter en cas d'erreur
+                    // poser la question [R]etry ou [C]ancel
+                    // si retry alors => retry = true (déjà le cas)
+                    // si cancel => throw
+                    // si on n'a pas passé le paramètre => throw
+
+                    Log($"Problème d'exécution d'un batch. Exception = { ex.Message}");
+                    if (parameters.IsPromptOnError)
+                    {
+                        char userRetryValue;
+                        char v1, v2;
+                        
+                        do
+                        {
+                            Console.WriteLine($"Si vous voulez corriger le batch : {batch} dans le script : {script} taper [R]etry or [C]ancel");
+
+                            userRetryValue = char.ToLower(Console.ReadKey().KeyChar);
+                            v1 = 'r';
+                            v2 = 'c';
+                            if (userRetryValue == (v2))
+                            {
+                                throw;
+                            }
+                        } while ((userRetryValue != v1) && (userRetryValue != v2));
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
         }
