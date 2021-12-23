@@ -30,7 +30,8 @@ namespace DBUpdate_Client
                     {
                         while (reader.Read())
                         {
-                            string blockName = reader.GetString(0);
+                            int myOrdinal = reader.GetOrdinal("BlockName");
+                            string blockName = reader.GetString(myOrdinal);
                             alreadyExecuted.Add(blockName);
                         }
                     }
