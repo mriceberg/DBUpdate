@@ -11,8 +11,8 @@ namespace DBUpdate_Client
     public class CheckMissingSqlFilesInXml
     {
         private readonly IConfigurationProvider configurationProvider;
-        private DBUpdateConfiguration configuration;
-        private DBUpdateParameters parameters;
+        private readonly DBUpdateConfiguration configuration;
+        private readonly DBUpdateParameters parameters;
         private List<string> resultAllSqlFilesNotReferencedInXmlFiles;
 
         public CheckMissingSqlFilesInXml(IConfigurationProvider configuration, DBUpdateParameters parameters)
