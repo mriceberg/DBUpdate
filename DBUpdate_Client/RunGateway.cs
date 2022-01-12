@@ -27,7 +27,6 @@ namespace DBUpdate_Client
                     {
                         reader.Read();
 
-                        //int myOrdinal = reader.GetOrdinal("Id");
                         int id = reader.GetInt32(0);
 
                         return id;
