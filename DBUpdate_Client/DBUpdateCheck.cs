@@ -49,19 +49,16 @@ namespace DBUpdate_Client
         {
             foreach (var file in new DBUpdateExecutionDescriptorProvider().GetFilesToRead(_config.WorkingDirectory))
             {
+                CheckParameters(_param);
                 CheckXML(file);
                 CheckSqlRefInBlock(file);
                 CheckBatchGoCommentedInMultiLineComment(file);
-                CheckParameters(_param);
                 if (_param.IsSimulation)
                 {
                     StatsWithSimulationMode(_connectionProvider, file);
                 }
-            }
-
-           
+            }      
         }
-
         private void CheckXML(string filePath)
         {
             var fileFolder = Path.GetDirectoryName(filePath);
@@ -94,7 +91,6 @@ namespace DBUpdate_Client
             }
         }
         // Display any warnings or errors.
-
         private void CheckParameters(DBUpdateParameters _param)
         {
             if(!String.IsNullOrEmpty(_param.IsUpToBlock) && !String.IsNullOrEmpty(_param.IsBlockName))
@@ -102,7 +98,6 @@ namespace DBUpdate_Client
                 _logger.LogMessage("Attention 2 paramètres sont en conflits ! MaxBlockName et BlockName. Seulement BlockName sera prit en compte.");
             }
         }
-
         private void ValidationCallBack(object sender, ValidationEventArgs args)
         {
             if (args.Severity == XmlSeverityType.Warning)
